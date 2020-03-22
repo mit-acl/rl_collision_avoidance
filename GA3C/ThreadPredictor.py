@@ -43,19 +43,9 @@ class ThreadPredictor(Thread):
             states_image = np.zeros((Config.PREDICTION_BATCH_SIZE, Config.IMAGE_HEIGHT, Config.IMAGE_WIDTH, Config.STACKED_FRAMES), dtype=np.float32)
         if Config.GAME_CHOICE == Config.game_collision_avoidance:
             states_agent = np.zeros((Config.PREDICTION_BATCH_SIZE, Config.NN_INPUT_SIZE), dtype=np.float32)
-        if Config.USE_AUDIO == True:
-            states_audio = np.zeros((Config.PREDICTION_BATCH_SIZE, Config.IMAGE_HEIGHT, Config.IMAGE_WIDTH, Config.STACKED_FRAMES), dtype=np.float32)
 
         while not self.exit_flag:
             # Predict p and v
-            if Config.USE_AUDIO == True:
-                ids[0], states_image[0], states_audio[0] = self.server.prediction_q.get()# Pops out the first element
-                size = 1
-                while size < Config.PREDICTION_BATCH_SIZE and not self.server.prediction_q.empty():
-                    ids[size], states_image[size], states_audio[size] = self.server.prediction_q.get()
-                    size += 1
-
-                p, v = self.server.model.predict_p_and_v(states_image[:size], states_audio[:size])# size will be "batch size"
 
             if Config.USE_IMAGE:
                 ids[0], states_image[0] = self.server.prediction_q.get()# Pops out the first element
@@ -64,7 +54,7 @@ class ThreadPredictor(Thread):
                     ids[size], states_image[size] = self.server.prediction_q.get()
                     size += 1
 
-                p, v = self.server.model.predict_p_and_v(states_image[:size], None)# size will be "batch size"
+                p, v = self.server.model.predict_p_and_v(states_image[:size])# size will be "batch size"
 
             elif Config.GAME_CHOICE == Config.game_collision_avoidance:
                 ids[0], states_agent[0] = self.server.prediction_q.get()# Pops out the first element
@@ -73,7 +63,7 @@ class ThreadPredictor(Thread):
                     ids[size], states_agent[size] = self.server.prediction_q.get()
                     size += 1
 
-                p, v = self.server.model.predict_p_and_v(states_agent[:size], None)# size will be "batch size"
+                p, v = self.server.model.predict_p_and_v(states_agent[:size])# size will be "batch size"
 
             else:
                 raise ValueError("[ ERROR ] ThreadPredictor not using valid inputs!")

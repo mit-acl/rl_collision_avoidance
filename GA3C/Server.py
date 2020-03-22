@@ -110,9 +110,9 @@ class Server:
         self.agents[-1].join()
         self.agents.pop()
 
-    def train_model(self, x_, audio_, r_, a_, trainer_id):
+    def train_model(self, x_, r_, a_, trainer_id):
         # [ INFO ] x_.shape: (45, 84, 84, 4) <--> (batch_size, row, col, channel)
-        self.model.train(x_, audio_, r_, a_, trainer_id)
+        self.model.train(x_, r_, a_, trainer_id)
         self.training_step += 1
         self.frame_counter += x_.shape[0]
         self.stats.training_count.value += 1
@@ -120,7 +120,7 @@ class Server:
         # Tensorboard logging
         if Config.TENSORBOARD and self.stats.training_count.value % Config.TENSORBOARD_UPDATE_FREQUENCY == 0:
             reward, roll_reward = self.stats.return_reward_log()
-            self.model.log(x_, audio_, r_, a_, reward, roll_reward)
+            self.model.log(x_, r_, a_, reward, roll_reward)
 
     def save_model(self):
         self.model.save(self.stats.episode_count.value)

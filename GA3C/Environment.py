@@ -40,13 +40,9 @@ class Environment:
         
         self.nb_frames    = Config.STACKED_FRAMES
         self.frame_q      = Queue(maxsize=self.nb_frames)
-        self.audio_q      = Queue(maxsize=self.nb_frames)
         self.total_reward = 0
 
-        if Config.USE_AUDIO:
-            self.previous_state = self.current_state = [None, None]
-        else:
-            self.previous_state = self.current_state = None
+        self.previous_state = self.current_state = None
 
         # self.reset()
 
@@ -70,25 +66,12 @@ class Environment:
             return agent_states_
 
         else:
-            if Config.USE_AUDIO:
-                if not self.frame_q.full() or not self.audio_q.full():
-                    return [None, None]
-
-                audio_ = np.array(self.audio_q.queue)
-                audio_ = np.transpose(audio_, [1, 2, 0])
-                # TODO concatenate audio into 1 long image instead
-
             if not self.frame_q.full():
                 return None
 
             image_ = np.array(self.frame_q.queue)
-            if Config.USE_IMAGE == True:
-                image_ = np.transpose(image_, [1, 2, 0]) # e.g., changes image from (1,84,84) to (84,84,1) 
 
-            if Config.USE_AUDIO:
-                return [image_, audio_]
-            else:
-                return image_
+            return image_
 
     def _update_frame_q(self, frame):
         if self.frame_q.full():
@@ -96,28 +79,13 @@ class Environment:
         self.frame_q.put(frame)
         if Config.DEBUG: print('[ DEBUG ] Environment::frame_q size is): {}'.format(self.frame_q.qsize()))
 
-    def _update_audio_q(self, audio):
-        if self.audio_q.full():
-            self.audio_q.get()# Pop oldest frame
-        self.audio_q.put(audio)
-        if Config.DEBUG: print('[ DEBUG ] Environment::audio_q size is): {}'.format(self.audio_q.qsize()))
-
     def reset(self, test_case=None, alg='A3C'):
         if Config.DEBUG: print('[ DEBUG ] Environment::reset()')
         self.total_reward = 0
         self.frame_q.queue.clear()
 
-        if Config.USE_AUDIO:
-            self.audio_q.queue.clear() 
-            
-            image, audio = self.game.reset(test_case=test_case)
-            self._update_frame_q(image)
-            self._update_audio_q(audio)
-
-            self.previous_state = self.current_state = [None, None]
-        else:
-            self._update_frame_q(self.game.reset(test_case=test_case, alg=alg))
-            self.previous_state = self.current_state = None
+        self._update_frame_q(self.game.reset(test_case=test_case, alg=alg))
+        self.previous_state = self.current_state = None
 
     def step(self, action, pid, count):
         if Config.DEBUG: print('[ DEBUG ] Environment::step()')
@@ -133,15 +101,8 @@ class Environment:
             #     if agent_observation[0] == 0:
             #         self._update_frame_q(agent_observation[1:])
 
-        elif Config.USE_AUDIO:
-            image = observation[0]
-            audio = observation[1]
-
-            self._update_frame_q(image)
-            self._update_audio_q(audio)
-        else:
-            image = observation
-            self._update_frame_q(image)
+        image = observation
+        self._update_frame_q(image)
 
         self.previous_state = self.current_state
         self.current_state = self._get_current_state()

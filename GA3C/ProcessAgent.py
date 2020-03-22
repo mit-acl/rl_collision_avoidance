@@ -85,20 +85,14 @@ class ProcessAgent(Process):
         a_ = np.eye(self.num_actions)[np.array([exp.action for exp in experiences], dtype=np.int32)].astype(np.float32)
         r_ = np.array([exp.reward for exp in experiences])
 
-        if Config.USE_AUDIO == True:
-            audio_ = np.array([exp.state_audio for exp in experiences])
-            return x_, audio_, r_, a_
-        elif Config.GAME_CHOICE == Config.game_collision_avoidance:
+        if Config.GAME_CHOICE == Config.game_collision_avoidance:
             return x_, r_, a_
         else:
             return x_, None, r_, a_
 
     def predict(self, current_state):
         # put the state in the prediction q
-        if Config.USE_AUDIO == True:
-            self.prediction_q.put((self.id, current_state[0], current_state[1]))
-        else:
-            self.prediction_q.put((self.id, current_state[1:]))
+        self.prediction_q.put((self.id, current_state[1:]))
 
         # wait for the prediction to come back
         p, v = self.wait_q.get()
@@ -125,18 +119,11 @@ class ProcessAgent(Process):
 
         while not game_over:
             # Initial step
-            if Config.USE_AUDIO == True:
-                if self.env.current_state[0] is None and self.env.current_state[1] is None:
-                    if Config.DEBUG: print('[ DEBUG ] ProcessAgent::Initial step')
-                    # self.env.step(0, self.pid, self.count)# Action 0 corresponds to null action
-                    self.count += 1
-                    continue
-            else:
-                if self.env.current_state is None:
-                    if Config.DEBUG: print('[ DEBUG ] ProcessAgent::Initial step')
-                    self.env.step(-1, self.pid, self.count)# Action 0 corresponds to null action
-                    # self.count += 1
-                    continue
+            if self.env.current_state is None:
+                if Config.DEBUG: print('[ DEBUG ] ProcessAgent::Initial step')
+                self.env.step(-1, self.pid, self.count)# Action 0 corresponds to null action
+                # self.count += 1
+                continue
 
             if Config.GAME_CHOICE == Config.game_collision_avoidance:
                 actions = np.empty((Config.MAX_NUM_AGENTS_IN_ENVIRONMENT))
@@ -188,9 +175,6 @@ class ProcessAgent(Process):
                 if Config.GAME_CHOICE == Config.game_collision_avoidance:
                     exp = Experience(self.env.previous_state[0,i,:], None,
                                      action, prediction, reward, done)
-                elif Config.USE_AUDIO == True:
-                    exp = Experience(self.env.previous_state[0], self.env.previous_state[1],
-                                     action, prediction, reward, done)
                 else:
                     exp = Experience(self.env.previous_state, None,
                                      action, prediction, reward, done)
@@ -215,8 +199,8 @@ class ProcessAgent(Process):
                         x_, r_, a_ = self.convert_to_nparray(updated_exps[i])# NOTE if Config::USE_AUDIO == False, audio_ is None
                         yield x_, r_, a_, reward_sum_logger[i] / self.env.game.num_agents_running_ga3c # sends back data without quitting the current fcn
                     else:
-                        x_, audio_, r_, a_ = self.convert_to_nparray(updated_exps) # NOTE if Config::USE_AUDIO == False, audio_ is None
-                        yield x_, audio_, r_, a_, init_rnn_state, reward_sum_logger # Sends back data and starts here next time fcn is called
+                        x_, r_, a_ = self.convert_to_nparray(updated_exps) # NOTE if Config::USE_AUDIO == False, audio_ is None
+                        yield x_, r_, a_, init_rnn_state, reward_sum_logger # Sends back data and starts here next time fcn is called
 
                     reward_sum_logger[i] = 0.0 # NOTE total_reward_logger in self.run() accumulates reward_sum_logger, so it is correct to reset it here 
 
@@ -226,8 +210,8 @@ class ProcessAgent(Process):
                             x_, r_, a_ = self.convert_to_nparray(updated_leftover_exps[i]) # NOTE if Config::USE_AUDIO == False, audio_ is None
                             yield x_, r_, a_, reward_sum_logger[i] # TODO minor figure out what to send back in terms of rnn_state. Technically should be rnn_state[-1].
                         else:
-                            x_, audio_, r_, a_ = self.convert_to_nparray(updated_leftover_exps) # NOTE if Config::USE_AUDIO == False, audio_ is None
-                            yield x_, audio_, r_, a_, init_rnn_state, reward_sum_logger # TODO minor figure out what to send back in terms of rnn_state. Technically should be rnn_state[-1].
+                            x_, r_, a_ = self.convert_to_nparray(updated_leftover_exps) # NOTE if Config::USE_AUDIO == False, audio_ is None
+                            yield x_, r_, a_, init_rnn_state, reward_sum_logger # TODO minor figure out what to send back in terms of rnn_state. Technically should be rnn_state[-1].
 
                     # Reset the tmax count
                     time_counts[i] = 0
@@ -252,18 +236,11 @@ class ProcessAgent(Process):
 
         while not game_over:
             # Initial step
-            if Config.USE_AUDIO == True:
-                if self.env.current_state[0] is None and self.env.current_state[1] is None:
-                    if Config.DEBUG: print('[ DEBUG ] ProcessAgent::Initial step')
-                    # self.env.step(0, self.pid, self.count)# Action 0 corresponds to null action
-                    self.count += 1
-                    continue
-            else:
-                if self.env.current_state is None:
-                    if Config.DEBUG: print('[ DEBUG ] ProcessAgent::Initial step')
-                    self.env.step(-1, self.pid, self.count)# Action 0 corresponds to null action
-                    self.count += 1
-                    continue
+            if self.env.current_state is None:
+                if Config.DEBUG: print('[ DEBUG ] ProcessAgent::Initial step')
+                self.env.step(-1, self.pid, self.count)# Action 0 corresponds to null action
+                self.count += 1
+                continue
 
             if Config.GAME_CHOICE == Config.game_collision_avoidance:
                 actions = np.empty((Config.MAX_NUM_AGENTS_IN_ENVIRONMENT))
@@ -413,12 +390,12 @@ class ProcessAgent(Process):
 
 
             else:
-                for x_, audio_, r_, a_, reward_sum in self.run_episode():
+                for x_, r_, a_, reward_sum in self.run_episode():
                     if Config.DEBUG: print('[ DEBUG ] ProcessAgent::x_.shape is: {}'.format(x_.shape))
                     if len(x_.shape) > 1:
                         total_reward += reward_sum
                         total_length += len(r_) + 1  # +1 for last frame that we drop
-                        self.training_q.put((x_, audio_, r_, a_))# NOTE if Config::USE_AUDIO == False, audio_ is None
+                        self.training_q.put((x_, r_, a_))# NOTE if Config::USE_AUDIO == False, audio_ is None
                     else: 
                         print('[ DEBUG ] x_ has wrong shape of {}'.format(x_.shape))
                         import sys; sys.exit()
