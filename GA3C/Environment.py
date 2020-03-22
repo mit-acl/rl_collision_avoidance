@@ -32,7 +32,6 @@ else: from Queue import Queue
 import numpy as np
 import scipy.misc as misc
 from Config import Config
-from Collision_Avoidance import CollisionAvoidance
 
 
 class Environment:
@@ -56,12 +55,15 @@ class Environment:
             self.game = Gridworld(id, Config.ENV_ROW, Config.ENV_COL, Config.PIXEL_SIZE, Config.MAX_ITER, Config.AGENT_COLOR, Config.TARGET_COLOR,
                                   Config.DISPLAY_SCREEN, Config.TIMER_DURATION, Config.IMAGE_WIDTH, Config.IMAGE_HEIGHT, Config.STACKED_FRAMES, Config.DEBUG)
         elif Config.GAME_CHOICE == Config.game_collision_avoidance:
-            self.game = CollisionAvoidance()
+            from gym_collision_avoidance.experiments.src.env_utils import run_episode, create_env, store_stats
+            env, one_env = create_env()
+            self.game = one_env            
+            # self.game = CollisionAvoidance()
         else: 
             raise ValueError("[ ERROR ] Invalid choice of game. Check Config.py for choices")
 
     def _get_current_state(self):
-        if Config.DEBUG: print '[ DEBUG ] Environment::_get_current_state()'
+        if Config.DEBUG: print('[ DEBUG ] Environment::_get_current_state()')
 
         if Config.GAME_CHOICE == Config.game_collision_avoidance:
             agent_states_ = np.array(self.frame_q.queue)
@@ -92,16 +94,16 @@ class Environment:
         if self.frame_q.full():
             self.frame_q.get()# Pop oldest frame
         self.frame_q.put(frame)
-        if Config.DEBUG: print '[ DEBUG ] Environment::frame_q size is: {}'.format(self.frame_q.qsize())
+        if Config.DEBUG: print('[ DEBUG ] Environment::frame_q size is): {}'.format(self.frame_q.qsize()))
 
     def _update_audio_q(self, audio):
         if self.audio_q.full():
             self.audio_q.get()# Pop oldest frame
         self.audio_q.put(audio)
-        if Config.DEBUG: print '[ DEBUG ] Environment::audio_q size is: {}'.format(self.audio_q.qsize())
+        if Config.DEBUG: print('[ DEBUG ] Environment::audio_q size is): {}'.format(self.audio_q.qsize()))
 
     def reset(self, test_case=None, alg='A3C'):
-        if Config.DEBUG: print '[ DEBUG ] Environment::reset()'
+        if Config.DEBUG: print('[ DEBUG ] Environment::reset()')
         self.total_reward = 0
         self.frame_q.queue.clear()
 
@@ -118,7 +120,7 @@ class Environment:
             self.previous_state = self.current_state = None
 
     def step(self, action, pid, count):
-        if Config.DEBUG: print '[ DEBUG ] Environment::step()'
+        if Config.DEBUG: print('[ DEBUG ] Environment::step()')
         observations, rewards, which_agents_done, game_over = self.game.step(action, pid, count)
         self.total_reward += np.sum(rewards)
 

@@ -84,7 +84,7 @@ class NetworkVP_rnn(NetworkVPCore):
         elif Config.MULTI_AGENT_ARCH in ['VANILLA','NONE']:
             self.layer1 = tf.layers.dense(inputs=self.x_normalized, units=256, activation=tf.nn.relu, kernel_regularizer=regularizer, name = 'layer1')
         else:
-            print "[NetworkVP_rnn.py] Config.MULTI_AGENT_ARCH is not a valid option."
+            print("[NetworkVP_rnn.py] Config.MULTI_AGENT_ARCH is not a valid option.")
             assert(0)
 
         self.layer2 = tf.layers.dense(inputs=self.layer1, units=256, activation=tf.nn.relu, name = 'layer2')

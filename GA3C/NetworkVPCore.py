@@ -11,22 +11,22 @@ class NetworkVPCore(object):
         # Set up wandb path (in case loading checkpt from certain runid)
         self.wandb_dir = os.path.dirname(os.path.realpath(__file__)) + '/checkpoints/RL'
 
-        # if training, add run to GA3C-CADRL project, add hyperparams and auto-upload checkpts
-        if not Config.PLAY_MODE and not Config.EVALUATE_MODE:
-            import wandb
-            from wandb.tensorflow import WandbHook
-            wandb.init(project=Config.WANDB_PROJECT_NAME, dir=self.wandb_dir)
-            wandb.config.update({'MAX_NUM_AGENTS_IN_ENVIRONMENT': Config.MAX_NUM_AGENTS_IN_ENVIRONMENT})
-            wandb.config.update({'MAX_NUM_AGENTS_TO_SIM': Config.MAX_NUM_AGENTS_TO_SIM})
-            wandb.config.update({'DISCOUNT': Config.DISCOUNT})
-            wandb.config.update({'SOCIAL_NORMS': Config.SOCIAL_NORMS})
-            wandb.config.update({'AGENT_SORTING_METHOD': Config.AGENT_SORTING_METHOD})
-            wandb.config.update({'LOAD_FROM_WANDB_RUN_ID': Config.LOAD_FROM_WANDB_RUN_ID})
-            wandb.config.update({'LOAD_EPISODE': Config.LOAD_EPISODE})
-            wandb.config.update({'LOAD_REGRESSION': Config.LOAD_REGRESSION})
-            wandb.save(os.path.join(wandb.run.dir,"checkpoints/network*"), base_path=wandb.run.dir)
-            self.wandb_log = wandb.log
-            self.wandb_run_dir = wandb.run.dir
+        # # if training, add run to GA3C-CADRL project, add hyperparams and auto-upload checkpts
+        # if not Config.PLAY_MODE and not Config.EVALUATE_MODE:
+        #     import wandb
+        #     from wandb.tensorflow import WandbHook
+        #     wandb.init(project=Config.WANDB_PROJECT_NAME, dir=self.wandb_dir)
+        #     wandb.config.update({'MAX_NUM_AGENTS_IN_ENVIRONMENT': Config.MAX_NUM_AGENTS_IN_ENVIRONMENT})
+        #     wandb.config.update({'MAX_NUM_AGENTS_TO_SIM': Config.MAX_NUM_AGENTS_TO_SIM})
+        #     wandb.config.update({'DISCOUNT': Config.DISCOUNT})
+        #     wandb.config.update({'SOCIAL_NORMS': Config.SOCIAL_NORMS})
+        #     wandb.config.update({'AGENT_SORTING_METHOD': Config.AGENT_SORTING_METHOD})
+        #     wandb.config.update({'LOAD_FROM_WANDB_RUN_ID': Config.LOAD_FROM_WANDB_RUN_ID})
+        #     wandb.config.update({'LOAD_EPISODE': Config.LOAD_EPISODE})
+        #     wandb.config.update({'LOAD_REGRESSION': Config.LOAD_REGRESSION})
+        #     wandb.save(os.path.join(wandb.run.dir,"checkpoints/network*"), base_path=wandb.run.dir)
+        #     self.wandb_log = wandb.log
+        #     self.wandb_run_dir = wandb.run.dir
 
         # Initialize DNN TF computation graph
         self.device = device
@@ -176,17 +176,17 @@ class NetworkVPCore(object):
             # feed_dict={self.x: x}
             # x, x_normalized, avg_vec, std_vec, num_other_agents, host_agent_vec, other_agent_vec, other_agent_seq, rnn_outputs, rnn_output, layer1_input = \
             #     self.sess.run([self.x, self.x_normalized, self.avg_vec, self.std_vec, self.num_other_agents, self.host_agent_vec, self.other_agent_vec, self.other_agent_seq, self.rnn_outputs, self.rnn_output, self.layer1_input], feed_dict=feed_dict)
-            # print "x:", x[0:3,:]
-            # print "self.avg_vec:", avg_vec
-            # print "self.std_vec:", std_vec
-            # print "x_normalized:", x_normalized[0:3,:]
-            # print "num_other_agents:", num_other_agents
-            # print "host_agent_vec:", host_agent_vec[0:3,:]
-            # print "other_agent_vec:", other_agent_vec[0:3,:]
-            # print "other_agent_seq:", other_agent_seq[0:3,:,:]
-            # print "rnn_outputs:", rnn_outputs[0:3,:,:]
-            # print "rnn_output after:", rnn_output[0:3,:]
-            # print "layer1_input:", layer1_input[0:3,:]
+            # print("x:", x[0:3,:])
+            # print("self.avg_vec:", avg_vec)
+            # print("self.std_vec:", std_vec)
+            # print("x_normalized:", x_normalized[0:3,:])
+            # print("num_other_agents:", num_other_agents)
+            # print("host_agent_vec:", host_agent_vec[0:3,:])
+            # print("other_agent_vec:", other_agent_vec[0:3,:])
+            # print("other_agent_seq:", other_agent_seq[0:3,:,:])
+            # print("rnn_outputs:", rnn_outputs[0:3,:,:])
+            # print("rnn_output after:", rnn_output[0:3,:])
+            # print("layer1_input:", layer1_input[0:3,:])
             # assert(0)
             return self.sess.run([self.softmax_p, self.logits_v], feed_dict={self.x: x})
 
@@ -203,14 +203,14 @@ class NetworkVPCore(object):
 
             # x, num_other_agents, host_agent_vec, other_agent_vec, other_agent_seq, rnn_outputs, rnn_output, layer1_input = \
                 # self.sess.run([self.x, self.num_other_agents, self.host_agent_vec, self.other_agent_vec, self.other_agent_seq, self.rnn_outputs, self.rnn_output, self.layer1_input], feed_dict=feed_dict)
-            # print "x:", x[0:3,:]
-            # print "num_other_agents:", num_other_agents
-            # print "host_agent_vec:", host_agent_vec[0:3,:]
-            # print "other_agent_vec:", other_agent_vec[0:3,:]
-            # print "other_agent_seq:", other_agent_seq[0:3,:,:]
-            # print "rnn_outputs:", rnn_outputs[0:3,:,:]
-            # print "rnn_output after:", rnn_output[0:3,:]
-            # print "layer1_input:", layer1_input[0:3,:]
+            # print("x:", x[0:3,:])
+            # print("num_other_agents:", num_other_agents)
+            # print("host_agent_vec:", host_agent_vec[0:3,:])
+            # print("other_agent_vec:", other_agent_vec[0:3,:])
+            # print("other_agent_seq:", other_agent_seq[0:3,:,:])
+            # print("rnn_outputs:", rnn_outputs[0:3,:,:])
+            # print("rnn_output after:", rnn_output[0:3,:])
+            # print("layer1_input:", layer1_input[0:3,:])
             # assert(0)
 
         elif learning_method == 'regression':
@@ -245,7 +245,7 @@ class NetworkVPCore(object):
             if wandb_runid is None:
                 # Not loading from a previous WandB experiment
                 return os.path.join(self.wandb_run_dir, '%s_%08d' % (self.model_name, episode))
-    	    else:
+            else:
                 # Loading from a previous WandB experiment
                 dir_to_load_from = os.path.join(os.path.join(self.wandb_dir, 'wandb'), wandb_runid)
                 return os.path.join(dir_to_load_from, 'checkpoints/%s_%08d' % (self.model_name, episode))
@@ -261,12 +261,12 @@ class NetworkVPCore(object):
     def load(self, learning_method='RL'):
 
         if Config.LOAD_EPISODE > 0:
-            print "[NetworkVPCore] Want to load episode #:", Config.LOAD_EPISODE
+            print("[NetworkVPCore] Want to load episode #:", Config.LOAD_EPISODE)
             filename = self._checkpoint_filename(Config.LOAD_EPISODE, from_backup = Config.LOAD_FROM_BACKUP_DIR, wandb_runid = Config.LOAD_FROM_WANDB_RUN_ID)
         else:
             filename = tf.train.latest_checkpoint(os.path.dirname(self._checkpoint_filename(episode=0, learning_method=learning_method)))
 
-        print "[NetworkVPCore] Loading checkpoint file:", filename
+        print("[NetworkVPCore] Loading checkpoint file:", filename)
         self.saver.restore(self.sess, filename)
 
         return self._get_episode_from_filename(filename)

@@ -33,7 +33,8 @@ from ProcessStats import ProcessStats
 from NoThreadDynamicAdjustment import ThreadDynamicAdjustment
 from ThreadPredictor import ThreadPredictor
 from ThreadTrainer import ThreadTrainer
-from Collision_Avoidance import Actions as CA_Actions
+from gym_collision_avoidance.envs.policies.GA3C_CADRL.network import Actions as CA_Actions
+# from Collision_Avoidance import Actions as CA_Actions
 from Regression import Regression
 
 class Server:
@@ -53,18 +54,18 @@ class Server:
         else:
             raise ValueError("[ ERROR ] Server game choice invalid!")
 
-        print "[Server] Making model..."
+        print("[Server] Making model...")
         self.model = self.make_model()
         if Config.TRAIN_WITH_REGRESSION:
-            print "[Server] Training with Regression."
+            print("[Server] Training with Regression.")
             Regression(self.model, Config.MAX_NUM_AGENTS_IN_ENVIRONMENT, self.actions).train_model()
         elif Config.LOAD_REGRESSION:
-            print "[Server] Loading Regression Model."
+            print("[Server] Loading Regression Model.")
             # self.stats.episode_count.value = self.model.load(learning_method='regression')
             self.model.load(learning_method='regression')
             self.stats.episode_count.value = 0
         elif Config.LOAD_CHECKPOINT: 
-            print "[Server] Loading RL Checkpoint Model."
+            print("[Server] Loading RL Checkpoint Model.")
             self.stats.episode_count.value = self.model.load(learning_method='RL')
 
         self.training_step      = 0

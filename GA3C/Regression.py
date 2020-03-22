@@ -1,7 +1,6 @@
 import numpy as np
 import pickle
-from CADRL_Agent import CADRL_Agent as CADRL_Agent
-import util
+# import util
 import time
 from Config import Config
 
@@ -36,10 +35,10 @@ class Regression():
                 "/environment/Collision-Avoidance/CADRL/pickle_files/multi/%d_agents/2_3_4_agents_%scadrl_dataset_action_value_test.p"%(num_agents,prepend), "rb"))
             num_train_pts = dataset_ped_train[0].shape[0]
             num_test_pts = dataset_ped_test[0].shape[0]
-            print 'dataset contains %d pts, training set has %d pts, test set has %d pts' % \
-                    (num_train_pts+num_test_pts, num_train_pts, num_test_pts)
+            print('dataset contains %d pts, training set has %d pts, test set has %d pts' % \
+                    (num_train_pts+num_test_pts, num_train_pts, num_test_pts))
         except AssertionError:
-            print 'pickle file does not exist, exiting'
+            print('pickle file does not exist, exiting')
             assert(0)
 
         return dataset_ped_train, dataset_ped_test
@@ -55,12 +54,12 @@ class Regression():
         ##########################################
         dataset_ped_train, dataset_ped_test = self.load_ped_data()
 
-        # print "There are %i training examples in total." %len(dataset_ped_train[0])
+        # print("There are %i training examples in total." %len(dataset_ped_train[0]))
         # small_angle_inds = np.where(abs(dataset_ped_train[0][:,5]) > np.pi/3)[0]
         # big_angle_inds = np.setdiff1d(np.arange(len(dataset_ped_train[0])),small_angle_inds)
-        # print "There are %i training examples with heading error > pi/3, and %i other ones" %(len(small_angle_inds),len(big_angle_inds))
+        # print("There are %i training examples with heading error > pi/3, and %i other ones" %(len(small_angle_inds),len(big_angle_inds)))
         # small_angle_inds = np.where(abs(dataset_ped_train[0][:,5]) > 2.5*np.pi/3)[0]
-        # print "There are %i training examples with heading error > 2pi/3" %len(small_angle_inds)
+        # print("There are %i training examples with heading error > 2pi/3" %len(small_angle_inds))
 
         # # For actions that involve big angle changes, set it to turn to the right. 
         # small_angle_inds = np.where(abs(dataset_ped_train[0][:,5]) < np.pi/3)[0]
@@ -75,17 +74,17 @@ class Regression():
 
         # # remove actions where there's another agent nearby
         # no_neighbor_inds = np.where(np.linalg.norm(dataset_ped_train[0][:,9:11], axis=1) > 8.0)[0]
-        # print "no_neighbor_inds:", no_neighbor_inds
+        # print("no_neighbor_inds:", no_neighbor_inds)
         # neighbor_inds = np.setdiff1d(np.arange(len(dataset_ped_train[0])),no_neighbor_inds)
         # dataset_ped_train[0] = dataset_ped_train[0][no_neighbor_inds,:]
         # dataset_ped_train[1] = dataset_ped_train[1][no_neighbor_inds,:]
         # dataset_ped_train[2] = dataset_ped_train[2][no_neighbor_inds,:]
 
 
-        # print "heading:", dataset_ped_train[0][big_angle_inds,5]
-        # print "action:", np.squeeze(dataset_ped_train[1][big_angle_inds,1])
+        # print("heading:", dataset_ped_train[0][big_angle_inds,5])
+        # print("action:", np.squeeze(dataset_ped_train[1][big_angle_inds,1]))
         # action_angle_change = util.find_angle_diff(dataset_ped_train[0][big_angle_inds,5], np.squeeze(dataset_ped_train[1][big_angle_inds,1]))
-        # print np.max(action_angle_change), np.min(action_angle_change)
+        # print(np.max(action_angle_change), np.min(action_angle_change))
         # TODO: Remove actions from regression dataset that involve non-max speed 
 
 
@@ -162,7 +161,7 @@ class Regression():
         # elif np.shape(input_x_cadrl)[1] == 18:
         #     pref_speed = input_x_cadrl[:,6]
         # else:
-        #     print "number of states in regression dataset doesn't match 2 or 4 agent structure"
+        #     print("number of states in regression dataset doesn't match 2 or 4 agent structure")
 
         # output_action[:,0] /= pref_speed_train # normalize commanded speed by pref_speed
         # output_action_test[:,0] /= pref_speed_test # normalize commanded speed by pref_speed
@@ -186,16 +185,16 @@ class Regression():
         total_steps = initial_step + num_training_steps
         for kk in xrange(initial_step, total_steps):
             if kk % PLOT_STEP == 0:
-                print "Regression Training Step %d/%d" %(kk, total_steps)
+                print("Regression Training Step %d/%d" %(kk, total_steps))
                 rand_ind = np.random.randint(0,nb_training_examples)
                 rand_x = np.expand_dims(input_x[rand_ind,:], axis=0); rand_a = output_action_one_hot[rand_ind,:]; rand_y = output_y[rand_ind]; audio = None
                 network_p, network_v = self.model.predict_p_and_v(rand_x, audio)
-                util.plot_snapshot(rand_x, rand_a, rand_y, self.actions.actions, network_p, network_v, figure_name="regression_snapshot")
+                # util.plot_snapshot(rand_x, rand_a, rand_y, self.actions.actions, network_p, network_v, figure_name="regression_snapshot")
                 
                 minibatch_indices = np.random.choice(nb_testing_examples, min(nb_testing_examples, batch_size), replace=False)
                 x = input_x_test[minibatch_indices]; a = output_action_test_one_hot[minibatch_indices]; y = np.squeeze(output_y_test[minibatch_indices])
                 v_loss, p_loss, loss = self.model.get_regression_loss(x, y, a)
-                print "[Regression] Loss on test set:", v_loss, p_loss, loss
+                print("[Regression] Loss on test set:", v_loss, p_loss, loss)
 
             minibatch_indices = np.random.choice(nb_training_examples, min(nb_training_examples, batch_size), replace=False)
             x = input_x[minibatch_indices]; a = output_action_one_hot[minibatch_indices]; y = np.squeeze(output_y[minibatch_indices])
@@ -231,10 +230,10 @@ class Regression():
         # indices = np.argmin(angle_diff, axis=1)
         
         # for i in range(100):
-        #     print actions[i,:], possible_actions[indices[i],:]
+        #     print(actions[i,:], possible_actions[indices[i],:])
 
-        # print 'actions', actions[:40,:]
-        # print 'indices (final)', indices[:40]
-        # print 'possible_actions[indices,:]', possible_actions[indices[:40],:]
+        # print('actions', actions[:40,:])
+        # print('indices (final)', indices[:40])
+        # print('possible_actions[indices,:]', possible_actions[indices[:40],:])
         # assert(0)
         return indices

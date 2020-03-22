@@ -127,13 +127,13 @@ class ProcessAgent(Process):
             # Initial step
             if Config.USE_AUDIO == True:
                 if self.env.current_state[0] is None and self.env.current_state[1] is None:
-                    if Config.DEBUG: print '[ DEBUG ] ProcessAgent::Initial step'
+                    if Config.DEBUG: print('[ DEBUG ] ProcessAgent::Initial step')
                     # self.env.step(0, self.pid, self.count)# Action 0 corresponds to null action
                     self.count += 1
                     continue
             else:
                 if self.env.current_state is None:
-                    if Config.DEBUG: print '[ DEBUG ] ProcessAgent::Initial step'
+                    if Config.DEBUG: print('[ DEBUG ] ProcessAgent::Initial step')
                     self.env.step(-1, self.pid, self.count)# Action 0 corresponds to null action
                     # self.count += 1
                     continue
@@ -142,11 +142,11 @@ class ProcessAgent(Process):
                 actions = np.empty((Config.MAX_NUM_AGENTS_IN_ENVIRONMENT))
                 predictions = np.empty((Config.MAX_NUM_AGENTS_IN_ENVIRONMENT,self.env.game.actions.num_actions))
                 values = np.empty((Config.MAX_NUM_AGENTS_IN_ENVIRONMENT))
-                # print "self.env.latest_observation:", self.env.latest_observation
+                # print("self.env.latest_observation:", self.env.latest_observation)
                 for i, agent_observation in enumerate(self.env.latest_observations):
                     if i not in self.env.game.which_agents_running_ga3c: continue
                     # Prediction
-                    # print "[ProcessAgent]", "i:", i, "agent_observation:", agent_observation
+                    # print("[ProcessAgent]", "i:", i, "agent_observation:", agent_observation)
                     # p, v = self.predict(agent_observation)
                     prediction, value = self.predict(agent_observation)
                     # Select action
@@ -156,8 +156,8 @@ class ProcessAgent(Process):
                     values[i] = value
                     actions[i] = action
 
-                    # print "action", actions[i]
-                # print "actions:", actions
+                    # print("action", actions[i])
+                # print("actions:", actions)
                 # Take action --> Receive reward, done (and also store self.env.previous_state for access below)
                 rewards, which_agents_done, game_over = self.env.step(actions, self.pid, self.count)
 
@@ -195,7 +195,7 @@ class ProcessAgent(Process):
                     exp = Experience(self.env.previous_state, None,
                                      action, prediction, reward, done)
 
-                if Config.DEBUG: print '[ DEBUG ] ProcessAgent::previous_state.shape: {}'.format(np.shape(self.env.previous_state))
+                if Config.DEBUG: print('[ DEBUG ] ProcessAgent::previous_state.shape: {}'.format(np.shape(self.env.previous_state)))
 
                 experiences[i].append(exp)
 
@@ -254,13 +254,13 @@ class ProcessAgent(Process):
             # Initial step
             if Config.USE_AUDIO == True:
                 if self.env.current_state[0] is None and self.env.current_state[1] is None:
-                    if Config.DEBUG: print '[ DEBUG ] ProcessAgent::Initial step'
+                    if Config.DEBUG: print('[ DEBUG ] ProcessAgent::Initial step')
                     # self.env.step(0, self.pid, self.count)# Action 0 corresponds to null action
                     self.count += 1
                     continue
             else:
                 if self.env.current_state is None:
-                    if Config.DEBUG: print '[ DEBUG ] ProcessAgent::Initial step'
+                    if Config.DEBUG: print('[ DEBUG ] ProcessAgent::Initial step')
                     self.env.step(-1, self.pid, self.count)# Action 0 corresponds to null action
                     self.count += 1
                     continue
@@ -269,23 +269,23 @@ class ProcessAgent(Process):
                 actions = np.empty((Config.MAX_NUM_AGENTS_IN_ENVIRONMENT))
                 predictions = np.empty((Config.MAX_NUM_AGENTS_IN_ENVIRONMENT,self.env.game.actions.num_actions))
                 values = np.empty((Config.MAX_NUM_AGENTS_IN_ENVIRONMENT))
-                # print "self.env.latest_observation:", self.env.latest_observation
+                # print("self.env.latest_observation:", self.env.latest_observation)
                 for i, agent_observation in enumerate(self.env.latest_observations):
                     # Prediction
-                    # print "[ProcessAgent]", "i:", i, "agent_observation:", agent_observation
+                    # print("[ProcessAgent]", "i:", i, "agent_observation:", agent_observation)
                     # p, v = self.predict(agent_observation)
                     prediction, value = self.predict(agent_observation)
                     # Select action
-                    # print "prediction:", prediction
+                    # print("prediction:", prediction)
                     action = self.select_action(prediction)
                     
                     predictions[i] = prediction
                     values[i] = value
                     actions[i] = action
 
-                    # print "action", actions[i]
+                    # print("action", actions[i])
                 # assert(0)
-                # print "actions:", actions
+                # print("actions:", actions)
                 # Take action --> Receive reward, done (and also store self.env.previous_state for access below)
                 rewards, which_agents_done, game_over = self.env.step(actions, self.pid, self.count)
         time_to_goal = np.array([self.env.game.agents[i].t for i in range(len(self.env.game.agents))])
@@ -338,47 +338,47 @@ class ProcessAgent(Process):
 
 
 
-                            print "Test Case:", test_case
+                            print("Test Case:", test_case)
                             if collision:
-                                print "*******Collision*********"
+                                print("*******Collision*********")
                                 num_test_cases_with_collision += 1
                             if not collision and not all_at_goal:
-                                print "*******Stuck*********"
+                                print("*******Stuck*********")
 
-                            print "Agents Time to goal:", times_to_goal
-                            print "Agents Extra Times to goal:", extra_times_to_goal
-                            print "Total time to goal (all agents):", np.sum(times_to_goal)
+                            print("Agents Time to goal:", times_to_goal)
+                            print("Agents Extra Times to goal:", extra_times_to_goal)
+                            print("Total time to goal (all agents):", np.sum(times_to_goal))
                             # time_to_goal_sum += np.sum(times_to_goal)
-                            # print "Running total:", time_to_goal_sum
+                            # print("Running total:", time_to_goal_sum)
 
                         # for x_, r_, a_, reward_sum in self.run_test_case(test_case):
-                        #     if Config.DEBUG: print '[ DEBUG ] ProcessAgent::x_.shape is: {}'.format(x_.shape)
+                        #     if Config.DEBUG: print('[ DEBUG ] ProcessAgent::x_.shape is: {}'.format(x_.shape))
                         #     if len(x_.shape) > 1:
                         #         total_reward += reward_sum
                         #         total_length += len(r_) + 1  # +1 for last frame that we drop
                         #     else: 
-                        #         print '[ DEBUG ] x_ has wrong shape of {}'.format(x_.shape)
+                        #         print('[ DEBUG ] x_ has wrong shape of {}'.format(x_.shape))
                         #         import sys; sys.exit()
                         # self.episode_log_q.put((datetime.now(), total_reward, total_length))
-                    print '-----------'
+                    print('-----------')
                     num = ''
                     if alg == 'A3C' and Config.LOAD_EPISODE == 1491000:
                         num = '1'
                     elif alg == 'A3C' and Config.LOAD_EPISODE == 1900000:
                         num = '2'
                     # pickle.dump(stats,open("logs/results/"+algs[0]+num+'.p','wb'))
-                    # print 'dumped'
+                    # print('dumped')
                     
-                    # # print stats
+                    # # print(stats)
                     # non_collision_inds = np.intersect1d(stats['A3C']['non_collision_inds'], stats['CADRL']['non_collision_inds'])
                     # all_at_goal_inds = np.intersect1d(stats['A3C']['all_at_goal_inds'], stats['CADRL']['all_at_goal_inds'])
                     # no_funny_business_inds = np.intersect1d(non_collision_inds, all_at_goal_inds)
                     # for alg in algs:
-                    #     print "Algorithm: %s" %alg
+                    #     print("Algorithm: %s" %alg)
                     #     num_collisions = test_case+1-len(stats[alg]['non_collision_inds'])
                     #     num_stuck = len(stats[alg]['stuck_inds'])
-                    #     print "Total # test cases with collision: %i of %i (%.2f%%)" %(num_collisions,test_case+1,(100.0*num_collisions/(test_case+1)))
-                    #     print "Total # test cases where agent got stuck: %i of %i (%.2f%%)" %(num_stuck,test_case+1,(100.0*num_stuck/(test_case+1)))
+                    #     print("Total # test cases with collision: %i of %i (%.2f%%)" %(num_collisions,test_case+1,(100.0*num_collisions/(test_case+1))))
+                    #     print("Total # test cases where agent got stuck: %i of %i (%.2f%%)" %(num_stuck,test_case+1,(100.0*num_stuck/(test_case+1))))
                     #     time_to_goal_sum = 0.0
                     #     extra_time_to_goal_sum = 0.0
                     #     extra_time_to_goal_vec = None
@@ -390,11 +390,11 @@ class ProcessAgent(Process):
                     #         else:
                     #             extra_time_to_goal_vec = np.hstack([extra_time_to_goal_vec, np.array(stats[alg][ind]['extra_times_to_goal'])])
                     #         mean_extra_time_to_goal_list.append(stats[alg][ind]['mean_extra_time_to_goal'])
-                    #     print "%s: total time to goal (non-collision/non-stuck cases): %.2f" %(alg, time_to_goal_sum)
-                    #     print "%s: extra time to goal (non-collision/non-stuck cases):" %(alg)
-                    #     print np.percentile(extra_time_to_goal_vec,[50,75,90])
-                    #     print "%s: mean extra time to goal (non-collision/non-stuck cases):" %(alg)
-                    #     print np.percentile(np.array(mean_extra_time_to_goal_list),[50,75,90])
+                    #     print("%s: total time to goal (non-collision/non-stuck cases): %.2f" %(alg, time_to_goal_sum))
+                    #     print("%s: extra time to goal (non-collision/non-stuck cases):" %(alg))
+                    #     print(np.percentile(extra_time_to_goal_vec,[50,75,90]))
+                    #     print("%s: mean extra time to goal (non-collision/non-stuck cases):" %(alg))
+                    #     print(np.percentile(np.array(mean_extra_time_to_goal_list),[50,75,90]))
 
 
 
@@ -402,25 +402,25 @@ class ProcessAgent(Process):
 
                 else:
                     for x_, r_, a_, reward_sum in self.run_episode():
-                        if Config.DEBUG: print '[ DEBUG ] ProcessAgent::x_.shape is: {}'.format(x_.shape)
+                        if Config.DEBUG: print('[ DEBUG ] ProcessAgent::x_.shape is: {}'.format(x_.shape))
                         if len(x_.shape) > 1:
                             total_reward += reward_sum
                             total_length += len(r_) + 1  # +1 for last frame that we drop
                             self.training_q.put((x_, r_, a_))# NOTE if Config::USE_AUDIO == False, audio_ is None
                         else: 
-                            print '[ DEBUG ] x_ has wrong shape of {}'.format(x_.shape)
+                            print('[ DEBUG ] x_ has wrong shape of {}'.format(x_.shape))
                             import sys; sys.exit()
 
 
             else:
                 for x_, audio_, r_, a_, reward_sum in self.run_episode():
-                    if Config.DEBUG: print '[ DEBUG ] ProcessAgent::x_.shape is: {}'.format(x_.shape)
+                    if Config.DEBUG: print('[ DEBUG ] ProcessAgent::x_.shape is: {}'.format(x_.shape))
                     if len(x_.shape) > 1:
                         total_reward += reward_sum
                         total_length += len(r_) + 1  # +1 for last frame that we drop
                         self.training_q.put((x_, audio_, r_, a_))# NOTE if Config::USE_AUDIO == False, audio_ is None
                     else: 
-                        print '[ DEBUG ] x_ has wrong shape of {}'.format(x_.shape)
+                        print('[ DEBUG ] x_ has wrong shape of {}'.format(x_.shape))
                         import sys; sys.exit()
 
             self.episode_log_q.put((datetime.now(), total_reward, total_length))
