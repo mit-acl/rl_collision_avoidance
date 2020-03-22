@@ -45,23 +45,23 @@ class NetworkVPCore(object):
             with tf.device(self.device):
                 self._create_graph()
 
-                self.sess = tf.Session(
+                self.sess = tf.compat.v1.Session(
                     graph=self.graph,
-                    config=tf.ConfigProto(
+                    config=tf.compat.v1.ConfigProto(
                         allow_soft_placement=True,
                         log_device_placement=False,
-                        gpu_options=tf.GPUOptions(allow_growth=True)))
-                self.sess.run(tf.global_variables_initializer())
+                        gpu_options=tf.compat.v1.GPUOptions(allow_growth=True)))
+                self.sess.run(tf.compat.v1.global_variables_initializer())
 
                 if Config.TENSORBOARD: self._create_tensor_board()
                 if Config.LOAD_CHECKPOINT or Config.SAVE_MODELS:
-                    vars = tf.global_variables()
-                    self.saver = tf.train.Saver({var.name: var for var in vars}, max_to_keep=0)
+                    vars = tf.compat.v1.global_variables()
+                    self.saver = tf.compat.v1.train.Saver({var.name: var for var in vars}, max_to_keep=0)
 
     
     def _create_graph_inputs(self):
         if Config.GAME_CHOICE == Config.game_collision_avoidance:
-            self.x = tf.placeholder(
+            self.x = tf.compat.v1.placeholder(
                 tf.float32, [None, Config.NN_INPUT_SIZE], name='X')
  
     def _create_graph_outputs(self):
@@ -70,20 +70,20 @@ class NetworkVPCore(object):
 
         # Cost: v 
         self.logits_v = tf.squeeze(tf.layers.dense(inputs=self.fc1, units = 1, use_bias = True, activation=None, name = 'logits_v'), axis=[1])
-        self.y_r = tf.placeholder(tf.float32, [None], name='Yr')
+        self.y_r = tf.compat.v1.placeholder(tf.float32, [None], name='Yr')
         self.cost_v = 0.5 * tf.reduce_sum(tf.square(self.y_r - self.logits_v), axis=0)
 
         # Cost: p
         self.logits_p = tf.layers.dense(inputs = self.fc1, units = self.num_actions, name = 'logits_p', activation = None)
         self.softmax_p = (tf.nn.softmax(self.logits_p) + Config.MIN_POLICY) / (1.0 + Config.MIN_POLICY * self.num_actions)
-        self.action_index = tf.placeholder(tf.float32, [None, self.num_actions])
+        self.action_index = tf.compat.v1.placeholder(tf.float32, [None, self.num_actions])
         self.selected_action_prob = tf.reduce_sum(self.softmax_p * self.action_index, axis=1, name='selection_action_prob')
 
-        self.cost_p_advant= tf.log(tf.maximum(self.selected_action_prob, self.log_epsilon)) \
+        self.cost_p_advant= tf.compat.v1.log(tf.maximum(self.selected_action_prob, self.log_epsilon)) \
                     * (self.y_r - tf.stop_gradient(self.logits_v))  # Stop_gradient ensures the value gradient feedback doesn't contribute to policy learning
-        self.var_beta = tf.placeholder(tf.float32, name='beta', shape=[])
+        self.var_beta = tf.compat.v1.placeholder(tf.float32, name='beta', shape=[])
         self.cost_p_entrop = -1. * self.var_beta * \
-                    tf.reduce_sum(tf.log(tf.maximum(self.softmax_p, self.log_epsilon)) *
+                    tf.reduce_sum(tf.compat.v1.log(tf.maximum(self.softmax_p, self.log_epsilon)) *
                                   self.softmax_p, axis=1)
 
         self.cost_p_advant_agg = tf.reduce_sum(self.cost_p_advant, axis=0, name='cost_p_advant_agg')
@@ -103,14 +103,14 @@ class NetworkVPCore(object):
         self.cost_regression_sum = tf.reduce_sum(self.cost_regression)
 
         # Optimizer
-        self.var_learning_rate = tf.placeholder(tf.float32, name='lr', shape=[])
+        self.var_learning_rate = tf.compat.v1.placeholder(tf.float32, name='lr', shape=[])
         if Config.OPTIMIZER == Config.OPT_RMSPROP:
             self.opt = tf.train.RMSPropOptimizer(learning_rate=self.var_learning_rate,
                                                     decay=Config.RMSPROP_DECAY,
                                                     momentum=Config.RMSPROP_MOMENTUM,
                                                     epsilon=Config.RMSPROP_EPSILON)
         elif Config.OPTIMIZER == Config.OPT_ADAM:
-            self.opt = tf.train.AdamOptimizer(learning_rate=self.var_learning_rate)
+            self.opt = tf.compat.v1.train.AdamOptimizer(learning_rate=self.var_learning_rate)
         else:
             raise ValueError('Invalid optimizer chosen! Check Config.py!')
 
@@ -127,23 +127,23 @@ class NetworkVPCore(object):
 
 
     def _create_tensor_board(self):
-        summaries = tf.get_collection(tf.GraphKeys.SUMMARIES)
-        summaries.append(tf.summary.scalar("Pcost_advantage", self.cost_p_advant_agg))
-        summaries.append(tf.summary.scalar("Pcost_entropy", self.cost_p_entrop_agg))
-        summaries.append(tf.summary.scalar("Pcost", self.cost_p))
-        summaries.append(tf.summary.scalar("Vcost", self.cost_v))
-        summaries.append(tf.summary.scalar("cost_all", self.cost_all))
-        summaries.append(tf.summary.scalar("LearningRate", self.var_learning_rate))
-        summaries.append(tf.summary.scalar("Beta", self.var_beta))
-        for var in tf.trainable_variables():
-            summaries.append(tf.summary.histogram("weights_%s" % var.name, var))
+        summaries = tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.SUMMARIES)
+        summaries.append(tf.compat.v1.summary.scalar("Pcost_advantage", self.cost_p_advant_agg))
+        summaries.append(tf.compat.v1.summary.scalar("Pcost_entropy", self.cost_p_entrop_agg))
+        summaries.append(tf.compat.v1.summary.scalar("Pcost", self.cost_p))
+        summaries.append(tf.compat.v1.summary.scalar("Vcost", self.cost_v))
+        summaries.append(tf.compat.v1.summary.scalar("cost_all", self.cost_all))
+        summaries.append(tf.compat.v1.summary.scalar("LearningRate", self.var_learning_rate))
+        summaries.append(tf.compat.v1.summary.scalar("Beta", self.var_beta))
+        for var in tf.compat.v1.trainable_variables():
+            summaries.append(tf.compat.v1.summary.histogram("weights_%s" % var.name, var))
 
-        summaries.append(tf.summary.histogram("activation_d2", self.fc1))
-        summaries.append(tf.summary.histogram("activation_v", self.logits_v))
-        summaries.append(tf.summary.histogram("activation_p", self.softmax_p))
+        summaries.append(tf.compat.v1.summary.histogram("activation_d2", self.fc1))
+        summaries.append(tf.compat.v1.summary.histogram("activation_v", self.logits_v))
+        summaries.append(tf.compat.v1.summary.histogram("activation_p", self.softmax_p))
 
-        self.summary_op = tf.summary.merge(summaries)
-        self.log_writer = tf.summary.FileWriter("logs/%s" % self.model_name, self.sess.graph)
+        self.summary_op = tf.compat.v1.summary.merge(summaries)
+        self.log_writer = tf.compat.v1.summary.FileWriter("logs/%s" % self.model_name, self.sess.graph)
 
     def __get_base_feed_dict(self):
         return {self.var_beta: self.beta, self.var_learning_rate: self.learning_rate_rl}
@@ -210,10 +210,10 @@ class NetworkVPCore(object):
 
         # Additionally log reward and rolling reward
         # Ref: https://gist.github.com/gyglim/1f8dfb1b5c82627ae3efcfbbadb9f514
-        summary = tf.Summary(value=[tf.Summary.Value(tag="Reward", simple_value=reward)])
+        summary = tf.compat.v1.Summary(value=[tf.compat.v1.Summary.Value(tag="Reward", simple_value=reward)])
         self.log_writer.add_summary(summary, step)
 
-        summary = tf.Summary(value=[tf.Summary.Value(tag="Roll_Reward", simple_value=roll_reward)])
+        summary = tf.compat.v1.Summary(value=[tf.compat.v1.Summary.Value(tag="Roll_Reward", simple_value=roll_reward)])
         self.log_writer.add_summary(summary, step)
 
         if not Config.PLAY_MODE and not Config.EVALUATE_MODE:

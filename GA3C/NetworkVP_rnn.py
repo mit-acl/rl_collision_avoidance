@@ -28,6 +28,7 @@ import os
 import re
 import numpy as np
 import tensorflow as tf
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 from NetworkVPCore import NetworkVPCore
 
 from Config import Config
