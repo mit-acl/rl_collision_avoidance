@@ -1,0 +1,11 @@
+*.egg-info
+*.pyc
+.idea
+*.swp
+*~
+*.lprof
+*.DS_Store
+
+.vscode
+
+venv
