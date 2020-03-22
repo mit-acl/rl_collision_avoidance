@@ -79,17 +79,17 @@ class Environment:
         self.frame_q.put(frame)
         if Config.DEBUG: print('[ DEBUG ] Environment::frame_q size is): {}'.format(self.frame_q.qsize()))
 
-    def reset(self, test_case=None, alg='A3C'):
+    def reset(self):
         if Config.DEBUG: print('[ DEBUG ] Environment::reset()')
         self.total_reward = 0
         self.frame_q.queue.clear()
 
-        self._update_frame_q(self.game.reset(test_case=test_case, alg=alg))
+        self._update_frame_q(self.game.reset())
         self.previous_state = self.current_state = None
 
     def step(self, action, pid, count):
         if Config.DEBUG: print('[ DEBUG ] Environment::step()')
-        observations, rewards, which_agents_done, game_over = self.game.step(action, pid, count)
+        observations, rewards, which_agents_done, game_over = self.game.step(action)
         self.total_reward += np.sum(rewards)
 
         if Config.GAME_CHOICE == Config.game_collision_avoidance:

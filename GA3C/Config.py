@@ -105,7 +105,7 @@ class Config:
     #########################################################################
     # NUMBER OF AGENTS, PREDICTORS, TRAINERS, AND OTHER SYSTEM SETTINGS
     # IF THE DYNAMIC CONFIG IS ON, THESE ARE THE INITIAL VALUES
-    AGENTS                        = 32 # Number of Agents
+    AGENTS                        = 1 # Number of Agents
     PREDICTORS                    = 2 # Number of Predictors
     TRAINERS                      = 2 # Number of Trainers
     DEVICE                        = '/cpu:0' # Device
