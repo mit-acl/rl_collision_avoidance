@@ -32,7 +32,6 @@ class Config:
     game_grid, game_ale, game_collision_avoidance = range(3) # Initialize game types as enum
     GAME_CHOICE         = game_collision_avoidance # Game choice: Either "game_grid" or "game_ale" or "game_collision_avoidance"
     DISPLAY_SCREEN      = False # Enable screen display during playback
-    USE_AUDIO           = False # Enable audio input
     USE_IMAGE           = False # Enable image input
     NET_ARCH            = 'NetworkVP_rnn' # Neural net architecture
     ALL_ARCHS           = ['NetworkVP_rnn'] # Can add more model types here

@@ -54,14 +54,12 @@ class ThreadTrainer(Thread):
 
                 else:
 
-                    image_, audio_, r_, a_ = self.server.training_q.get()
+                    image_, r_, a_ = self.server.training_q.get()
                     
                     if batch_size == 0:
                         image__ = image_; audio__ = audio_; r__ = r_; a__ = a_
                     else:
                         image__ = np.concatenate((image__, image_))
-                        if Config.USE_AUDIO == True: 
-                            audio__ = np.concatenate((audio__, audio_))
                         r__ = np.concatenate((r__, r_))
                         a__ = np.concatenate((a__, a_))
                     batch_size += image_.shape[0]
@@ -69,8 +67,6 @@ class ThreadTrainer(Thread):
             if Config.TRAIN_MODELS:
                 if Config.GAME_CHOICE == Config.game_collision_avoidance:
                     # self.server.train_model(agent_states__[:,0,:], None, r__, a__, self.id)
-                    self.server.train_model(agent_states__, None, r__, a__, self.id)
-                elif Config.USE_AUDIO == True:
-                    self.server.train_model(image__, audio__, r__, a__, self.id)
+                    self.server.train_model(agent_states__, r__, a__, self.id)
                 else:
-                    self.server.train_model(image__, None, r__, a__, self.id)
+                    self.server.train_model(image__, r__, a__, self.id)

@@ -85,20 +85,14 @@ class ProcessAgent(Process):
         a_ = np.eye(self.num_actions)[np.array([exp.action for exp in experiences], dtype=np.int32)].astype(np.float32)
         r_ = np.array([exp.reward for exp in experiences])
 
-        if Config.USE_AUDIO == True:
-            audio_ = np.array([exp.state_audio for exp in experiences])
-            return x_, audio_, r_, a_
-        elif Config.GAME_CHOICE == Config.game_collision_avoidance:
+        if Config.GAME_CHOICE == Config.game_collision_avoidance:
             return x_, r_, a_
         else:
             return x_, None, r_, a_
 
     def predict(self, current_state):
         # put the state in the prediction q
-        if Config.USE_AUDIO == True:
-            self.prediction_q.put((self.id, current_state[0], current_state[1]))
-        else:
-            self.prediction_q.put((self.id, current_state[1:]))
+        self.prediction_q.put((self.id, current_state[1:]))
 
         # wait for the prediction to come back
         p, v = self.wait_q.get()
@@ -125,18 +119,11 @@ class ProcessAgent(Process):
 
         while not game_over:
             # Initial step
-            if Config.USE_AUDIO == True:
-                if self.env.current_state[0] is None and self.env.current_state[1] is None:
-                    if Config.DEBUG: print('[ DEBUG ] ProcessAgent::Initial step')
-                    # self.env.step(0, self.pid, self.count)# Action 0 corresponds to null action
-                    self.count += 1
-                    continue
-            else:
-                if self.env.current_state is None:
-                    if Config.DEBUG: print('[ DEBUG ] ProcessAgent::Initial step')
-                    self.env.step(-1, self.pid, self.count)# Action 0 corresponds to null action
-                    # self.count += 1
-                    continue
+            if self.env.current_state is None:
+                if Config.DEBUG: print('[ DEBUG ] ProcessAgent::Initial step')
+                self.env.step(-1, self.pid, self.count)# Action 0 corresponds to null action
+                # self.count += 1
+                continue
 
             if Config.GAME_CHOICE == Config.game_collision_avoidance:
                 actions = np.empty((Config.MAX_NUM_AGENTS_IN_ENVIRONMENT))
@@ -187,9 +174,6 @@ class ProcessAgent(Process):
                 # Add to experience
                 if Config.GAME_CHOICE == Config.game_collision_avoidance:
                     exp = Experience(self.env.previous_state[0,i,:], None,
-                                     action, prediction, reward, done)
-                elif Config.USE_AUDIO == True:
-                    exp = Experience(self.env.previous_state[0], self.env.previous_state[1],
                                      action, prediction, reward, done)
                 else:
                     exp = Experience(self.env.previous_state, None,
@@ -252,18 +236,11 @@ class ProcessAgent(Process):
 
         while not game_over:
             # Initial step
-            if Config.USE_AUDIO == True:
-                if self.env.current_state[0] is None and self.env.current_state[1] is None:
-                    if Config.DEBUG: print('[ DEBUG ] ProcessAgent::Initial step')
-                    # self.env.step(0, self.pid, self.count)# Action 0 corresponds to null action
-                    self.count += 1
-                    continue
-            else:
-                if self.env.current_state is None:
-                    if Config.DEBUG: print('[ DEBUG ] ProcessAgent::Initial step')
-                    self.env.step(-1, self.pid, self.count)# Action 0 corresponds to null action
-                    self.count += 1
-                    continue
+            if self.env.current_state is None:
+                if Config.DEBUG: print('[ DEBUG ] ProcessAgent::Initial step')
+                self.env.step(-1, self.pid, self.count)# Action 0 corresponds to null action
+                self.count += 1
+                continue
 
             if Config.GAME_CHOICE == Config.game_collision_avoidance:
                 actions = np.empty((Config.MAX_NUM_AGENTS_IN_ENVIRONMENT))

@@ -151,51 +151,36 @@ class NetworkVPCore(object):
     def get_global_step(self):
         return self.sess.run(self.global_step)
 
-    def predict_single(self, x, audio):
-        if Config.USE_AUDIO:
-            return self.predict_p(x[None, :], audio[None, :])[0]
-        else:
-            return self.predict_p(x[None, :])[0]
+    def predict_single(self, x):
+        return self.predict_p(x[None, :])[0]
 
-    def predict_v(self, x, audio):
-        if Config.USE_AUDIO:
-            return self.sess.run(self.logits_v, feed_dict={self.x: x, self.input_audio: audio})
-        else:
-            return self.sess.run(self.logits_v, feed_dict={self.x: x})
+    def predict_v(self, x):
+        return self.sess.run(self.logits_v, feed_dict={self.x: x})
 
-    def predict_p(self, x, audio):
-        if Config.USE_AUDIO:
-            return self.sess.run(self.softmax_p, feed_dict={self.x: x, self.input_audio: audio})
-        else:
-            return self.sess.run(self.softmax_p, feed_dict={self.x: x})
+    def predict_p(self, x):
+        return self.sess.run(self.softmax_p, feed_dict={self.x: x})
 
-    def predict_p_and_v(self, x, audio):
-        if Config.USE_AUDIO:
-            return self.sess.run([self.softmax_p, self.logits_v], feed_dict={self.x: x, self.input_audio: audio})
-        else:
-            # feed_dict={self.x: x}
-            # x, x_normalized, avg_vec, std_vec, num_other_agents, host_agent_vec, other_agent_vec, other_agent_seq, rnn_outputs, rnn_output, layer1_input = \
-            #     self.sess.run([self.x, self.x_normalized, self.avg_vec, self.std_vec, self.num_other_agents, self.host_agent_vec, self.other_agent_vec, self.other_agent_seq, self.rnn_outputs, self.rnn_output, self.layer1_input], feed_dict=feed_dict)
-            # print("x:", x[0:3,:])
-            # print("self.avg_vec:", avg_vec)
-            # print("self.std_vec:", std_vec)
-            # print("x_normalized:", x_normalized[0:3,:])
-            # print("num_other_agents:", num_other_agents)
-            # print("host_agent_vec:", host_agent_vec[0:3,:])
-            # print("other_agent_vec:", other_agent_vec[0:3,:])
-            # print("other_agent_seq:", other_agent_seq[0:3,:,:])
-            # print("rnn_outputs:", rnn_outputs[0:3,:,:])
-            # print("rnn_output after:", rnn_output[0:3,:])
-            # print("layer1_input:", layer1_input[0:3,:])
-            # assert(0)
-            return self.sess.run([self.softmax_p, self.logits_v], feed_dict={self.x: x})
+    def predict_p_and_v(self, x):
+        # feed_dict={self.x: x}
+        # x, x_normalized, avg_vec, std_vec, num_other_agents, host_agent_vec, other_agent_vec, other_agent_seq, rnn_outputs, rnn_output, layer1_input = \
+        #     self.sess.run([self.x, self.x_normalized, self.avg_vec, self.std_vec, self.num_other_agents, self.host_agent_vec, self.other_agent_vec, self.other_agent_seq, self.rnn_outputs, self.rnn_output, self.layer1_input], feed_dict=feed_dict)
+        # print("x:", x[0:3,:])
+        # print("self.avg_vec:", avg_vec)
+        # print("self.std_vec:", std_vec)
+        # print("x_normalized:", x_normalized[0:3,:])
+        # print("num_other_agents:", num_other_agents)
+        # print("host_agent_vec:", host_agent_vec[0:3,:])
+        # print("other_agent_vec:", other_agent_vec[0:3,:])
+        # print("other_agent_seq:", other_agent_seq[0:3,:,:])
+        # print("rnn_outputs:", rnn_outputs[0:3,:,:])
+        # print("rnn_output after:", rnn_output[0:3,:])
+        # print("layer1_input:", layer1_input[0:3,:])
+        # assert(0)
+        return self.sess.run([self.softmax_p, self.logits_v], feed_dict={self.x: x})
 
-    def train(self, x, audio, y_r, a, trainer_id, learning_method='RL'): # TODO: Is trainer_id needed?
+    def train(self, x, y_r, a, trainer_id, learning_method='RL'): # TODO: Is trainer_id needed?
         feed_dict = self.__get_base_feed_dict()
-        if Config.USE_AUDIO:
-            feed_dict.update({self.x: x, self.input_audio: audio, self.y_r: y_r, self.action_index: a})
-        else:
-            feed_dict.update({self.x: x, self.y_r: y_r, self.action_index: a})
+        feed_dict.update({self.x: x, self.y_r: y_r, self.action_index: a})
         
         if learning_method == 'RL':
             feed_dict.update({self.var_learning_rate: self.learning_rate_rl})
@@ -219,10 +204,7 @@ class NetworkVPCore(object):
 
     def log(self, x, audio, y_r, a, reward, roll_reward):
         feed_dict = self.__get_base_feed_dict()
-        if Config.USE_AUDIO:
-            feed_dict.update({self.x: x, self.input_audio: audio, self.y_r: y_r, self.action_index: a})
-        else:
-            feed_dict.update({self.x: x, self.y_r: y_r, self.action_index: a})
+        feed_dict.update({self.x: x, self.y_r: y_r, self.action_index: a})
         step, summary = self.sess.run([self.global_step, self.summary_op], feed_dict=feed_dict)
         self.log_writer.add_summary(summary, step)
 

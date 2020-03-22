@@ -26,9 +26,8 @@
 
 
 class Experience:
-    def __init__(self, image, audio, action, prediction, reward, done):
+    def __init__(self, image, action, prediction, reward, done):
         self.state_image = image
-        self.state_audio = audio
         self.action = action
         self.prediction = prediction
         self.reward = reward
