@@ -41,6 +41,7 @@ class GA3CConfig(Config):
         self.USE_WANDB = False
         self.WANDB_PROJECT_NAME = "ga3c_cadrl"
         self.DEBUG               = False # Enable debug (prints more information for debugging purpose)
+        self.RANDOM_SEED_1000 = 0 # np.random.seed(this * 1000 + env_id)
 
         ### OBSERVATIONS
         self.USE_IMAGE           = False # Enable image input

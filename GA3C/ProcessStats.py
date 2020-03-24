@@ -60,58 +60,58 @@ class ProcessStats(Process):
 		return np.ceil(self.training_count.value / (time.time() - self.start_time))
 
 	def run(self):
-		with open(Config.RESULTS_FILENAME, 'a') as results_logger:
-			# Init parameters
-			rolling_frame_count = 0
-			rolling_reward = 0
-			results_q = queueQueue(maxsize=Config.STAT_ROLLING_MEAN_WINDOW)
-			self.start_time = time.time()
-			first_time = datetime.now()
+		# with open(Config.RESULTS_FILENAME, 'a') as results_logger:
+		# Init parameters
+		rolling_frame_count = 0
+		rolling_reward = 0
+		results_q = queueQueue(maxsize=Config.STAT_ROLLING_MEAN_WINDOW)
+		self.start_time = time.time()
+		first_time = datetime.now()
 
-			while True:
-				episode_time, reward, length = self.episode_log_q.get()
+		while True:
+			episode_time, reward, length = self.episode_log_q.get()
 
-				self.total_frame_count += length
-				self.episode_count.value += 1
+			self.total_frame_count += length
+			self.episode_count.value += 1
 
-				rolling_frame_count += length
-				rolling_reward += reward
+			rolling_frame_count += length
+			rolling_reward += reward
 
-				# Append episode_time, reward, length to results_q
-				if results_q.full():
-					old_episode_time, old_reward, old_length = results_q.get()
-					rolling_frame_count -= old_length
-					rolling_reward -= old_reward
-					first_time = old_episode_time
-				results_q.put((episode_time, reward, length))
+			# Append episode_time, reward, length to results_q
+			if results_q.full():
+				old_episode_time, old_reward, old_length = results_q.get()
+				rolling_frame_count -= old_length
+				rolling_reward -= old_reward
+				first_time = old_episode_time
+			results_q.put((episode_time, reward, length))
 
-				if self.episode_count.value % Config.SAVE_FREQUENCY == 0:
-					self.should_save_model.value = 1
+			if self.episode_count.value % Config.SAVE_FREQUENCY == 0:
+				self.should_save_model.value = 1
 
-				# Print result to table
-				if self.episode_count.value % Config.PRINT_STATS_FREQUENCY == 0:
-					print('[Time: %8d] '
-						  '[Episode: %8d Score: %10.4f] '
-						  '[RScore: %10.4f RPPS: %5d] '
-						  '[PPS: %5d TPS: %5d] '
-						  '[NT: %2d NP: %2d NA: %2d]'
-						% (int(time.time()-self.start_time),
-						   self.episode_count.value,
-						   reward,
-						   rolling_reward / results_q.qsize(),
-						   rolling_frame_count / (datetime.now() - first_time).total_seconds(),
-						   self.FPS(),
-						   self.TPS(),
-						   self.trainer_count.value,
-						   self.predictor_count.value,
-						   self.agent_count.value))
-					self.reward_log.value = reward
-					self.roll_reward_log.value = rolling_reward / results_q.qsize()
+			# Print result to table
+			if self.episode_count.value % Config.PRINT_STATS_FREQUENCY == 0:
+				print('[Time: %8d] '
+					  '[Episode: %8d Score: %10.4f] '
+					  '[RScore: %10.4f RPPS: %5d] '
+					  '[PPS: %5d TPS: %5d] '
+					  '[NT: %2d NP: %2d NA: %2d]'
+					% (int(time.time()-self.start_time),
+					   self.episode_count.value,
+					   reward,
+					   rolling_reward / results_q.qsize(),
+					   rolling_frame_count / (datetime.now() - first_time).total_seconds(),
+					   self.FPS(),
+					   self.TPS(),
+					   self.trainer_count.value,
+					   self.predictor_count.value,
+					   self.agent_count.value))
+				self.reward_log.value = reward
+				self.roll_reward_log.value = rolling_reward / results_q.qsize()
 
-					sys.stdout.flush()
+				sys.stdout.flush()
 
-				# Results_logger (results.txt)
-                # Log date, rolling reward, length
-				results_logger.write('%s, %d, %d\n' % (episode_time.strftime("%Y-%m-%d %H:%M:%S"), rolling_reward / results_q.qsize(), length))
-				results_logger.flush()
+				# # Results_logger (results.txt)
+    #             # Log date, rolling reward, length
+				# results_logger.write('%s, %d, %d\n' % (episode_time.strftime("%Y-%m-%d %H:%M:%S"), rolling_reward / results_q.qsize(), length))
+				# results_logger.flush()
 
