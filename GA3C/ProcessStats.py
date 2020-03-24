@@ -30,7 +30,7 @@ if sys.version_info >= (3,0): from queue import Queue as queueQueue
 else: from Queue import Queue as queueQueue
 from datetime import datetime
 from multiprocessing import Process, Queue, Value
-from Config import Config
+from Config import GA3CConfig; Config = GA3CConfig()
 
 
 class ProcessStats(Process):

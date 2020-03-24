@@ -2,7 +2,7 @@ import os
 import re
 import numpy as np
 import tensorflow as tf
-from Config import Config
+from Config import GA3CConfig; Config = GA3CConfig()
 
 
 class NetworkVPCore(object):
@@ -11,30 +11,29 @@ class NetworkVPCore(object):
         # Set up wandb path (in case loading checkpt from certain runid)
         self.wandb_dir = os.path.dirname(os.path.realpath(__file__)) + '/checkpoints/RL'
 
-        # # if training, add run to GA3C-CADRL project, add hyperparams and auto-upload checkpts
-        # if not Config.PLAY_MODE and not Config.EVALUATE_MODE:
-        #     import wandb
-        #     from wandb.tensorflow import WandbHook
-        #     wandb.init(project=Config.WANDB_PROJECT_NAME, dir=self.wandb_dir)
-        #     wandb.config.update({'MAX_NUM_AGENTS_IN_ENVIRONMENT': Config.MAX_NUM_AGENTS_IN_ENVIRONMENT})
-        #     wandb.config.update({'MAX_NUM_AGENTS_TO_SIM': Config.MAX_NUM_AGENTS_TO_SIM})
-        #     wandb.config.update({'DISCOUNT': Config.DISCOUNT})
-        #     wandb.config.update({'SOCIAL_NORMS': Config.SOCIAL_NORMS})
-        #     wandb.config.update({'AGENT_SORTING_METHOD': Config.AGENT_SORTING_METHOD})
-        #     wandb.config.update({'LOAD_FROM_WANDB_RUN_ID': Config.LOAD_FROM_WANDB_RUN_ID})
-        #     wandb.config.update({'LOAD_EPISODE': Config.LOAD_EPISODE})
-        #     wandb.config.update({'LOAD_REGRESSION': Config.LOAD_REGRESSION})
-        #     wandb.save(os.path.join(wandb.run.dir,"checkpoints/network*"), base_path=wandb.run.dir)
-        #     self.wandb_log = wandb.log
-        #     self.wandb_run_dir = wandb.run.dir
+        # if training, add run to GA3C-CADRL project, add hyperparams and auto-upload checkpts
+        if not Config.PLAY_MODE and not Config.EVALUATE_MODE and Config.USE_WANDB:
+            import wandb
+            from wandb.tensorflow import WandbHook
+            wandb.init(project=Config.WANDB_PROJECT_NAME, dir=self.wandb_dir)
+            wandb.config.update({'MAX_NUM_AGENTS_IN_ENVIRONMENT': Config.MAX_NUM_AGENTS_IN_ENVIRONMENT})
+            wandb.config.update({'MAX_NUM_AGENTS_TO_SIM': Config.MAX_NUM_AGENTS_TO_SIM})
+            wandb.config.update({'DISCOUNT': Config.DISCOUNT})
+            wandb.config.update({'SOCIAL_NORMS': Config.SOCIAL_NORMS})
+            wandb.config.update({'AGENT_SORTING_METHOD': Config.AGENT_SORTING_METHOD})
+            wandb.config.update({'LOAD_FROM_WANDB_RUN_ID': Config.LOAD_FROM_WANDB_RUN_ID})
+            wandb.config.update({'LOAD_EPISODE': Config.LOAD_EPISODE})
+            wandb.config.update({'LOAD_REGRESSION': Config.LOAD_REGRESSION})
+            wandb.save(os.path.join(wandb.run.dir,"checkpoints/network*"), base_path=wandb.run.dir)
+            self.wandb_log = wandb.log
+            self.save_dir = wandb.run.dir
+        else:
+            self.save_dir = os.path.dirname(os.path.realpath(__file__)) + '/checkpoints/RL_tmp'
 
         # Initialize DNN TF computation graph
         self.device = device
         self.model_name = model_name
         self.num_actions = num_actions
-        self.img_width = Config.IMAGE_WIDTH
-        self.img_height = Config.IMAGE_HEIGHT
-        self.img_channels = Config.STACKED_FRAMES
         self.learning_rate_rl = Config.LEARNING_RATE_RL_START
         self.learning_rate_regression = Config.LEARNING_RATE_REGRESSION_START
         self.beta = Config.BETA_START
@@ -202,7 +201,7 @@ class NetworkVPCore(object):
             feed_dict.update({self.var_learning_rate: self.learning_rate_regression})
             self.sess.run(self.train_regression_op, feed_dict=feed_dict)
 
-    def log(self, x, audio, y_r, a, reward, roll_reward):
+    def log(self, x, y_r, a, reward, roll_reward):
         feed_dict = self.__get_base_feed_dict()
         feed_dict.update({self.x: x, self.y_r: y_r, self.action_index: a})
         step, summary = self.sess.run([self.global_step, self.summary_op], feed_dict=feed_dict)
@@ -216,7 +215,7 @@ class NetworkVPCore(object):
         summary = tf.compat.v1.Summary(value=[tf.compat.v1.Summary.Value(tag="Roll_Reward", simple_value=roll_reward)])
         self.log_writer.add_summary(summary, step)
 
-        if not Config.PLAY_MODE and not Config.EVALUATE_MODE:
+        if not Config.PLAY_MODE and not Config.EVALUATE_MODE and Config.USE_WANDB:
             self.wandb_log({'reward': reward, 'roll_reward': roll_reward, 'step': step})
 
     def _checkpoint_filename(self, episode, learning_method='RL', from_backup = False, wandb_runid=None):
@@ -226,7 +225,7 @@ class NetworkVPCore(object):
         if learning_method == 'RL':
             if wandb_runid is None:
                 # Not loading from a previous WandB experiment
-                return os.path.join(self.wandb_run_dir, '%s_%08d' % (self.model_name, episode))
+                return os.path.join(self.save_dir, '%s_%08d' % (self.model_name, episode))
             else:
                 # Loading from a previous WandB experiment
                 dir_to_load_from = os.path.join(os.path.join(self.wandb_dir, 'wandb'), wandb_runid)

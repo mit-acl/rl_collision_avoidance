@@ -28,7 +28,7 @@ import time
 import numpy as np
 from datetime import datetime
 from multiprocessing import Process, Queue, Value
-from Config import Config
+from Config import GA3CConfig; Config = GA3CConfig()
 from Environment import Environment
 from Experience import Experience
 import pickle
@@ -60,8 +60,7 @@ class ProcessAgent(Process):
 
         # Exception case for experiences length of 0
         if len(experiences) == 1:
-            experiences[0].reward = np.clip(experiences[0].reward, Config.REWARD_MIN, Config.REWARD_MAX) 
-            return experiences, leftover_term_exp 
+            return experiences, leftover_term_exp
         else:
             if done and len(experiences) == Config.TIME_MAX+1:
                 leftover_term_exp = [experiences[-1]]
@@ -69,12 +68,12 @@ class ProcessAgent(Process):
                 n_exps = len(experiences)
                 returned_exp = experiences
 
-            for t in reversed(xrange(0, n_exps)):
+            for t in reversed(range(0, n_exps)):
                 # experiences[t].reward is single-step reward here
-                r = np.clip(experiences[t].reward, Config.REWARD_MIN, Config.REWARD_MAX) 
-                reward_sum = discount_factor * reward_sum + r 
+                r = experiences[t].reward
+                reward_sum = discount_factor * reward_sum + r
                 #  experiences[t]. reward now becomes y_r (target reward, with discounting), and is used as y_r in training thereafter. I.e., variable name is overloaded. Totally OK but dirty.
-                experiences[t].reward = reward_sum 
+                experiences[t].reward = reward_sum
 
             # Final experience is removed 
             return returned_exp, leftover_term_exp
@@ -119,19 +118,24 @@ class ProcessAgent(Process):
 
         while not game_over:
             # Initial step
-            if self.env.current_state is None:
-                if Config.DEBUG: print('[ DEBUG ] ProcessAgent::Initial step')
-                self.env.step(-1, self.pid, self.count)# Action 0 corresponds to null action
-                # self.count += 1
-                continue
+            # if self.env.current_state is None:
+            #     if Config.DEBUG: print('[ DEBUG ] ProcessAgent::Initial step')
+            #     self.env.step(-1, self.pid, self.count)# Action 0 corresponds to null action
+            #     # self.count += 1
+            #     continue
 
             if Config.GAME_CHOICE == Config.game_collision_avoidance:
-                actions = np.empty((Config.MAX_NUM_AGENTS_IN_ENVIRONMENT))
-                predictions = np.empty((Config.MAX_NUM_AGENTS_IN_ENVIRONMENT,self.env.game.actions.num_actions))
+                actions = {}
+
+                predictions = np.empty((Config.MAX_NUM_AGENTS_IN_ENVIRONMENT,Config.NUM_ACTIONS))
                 values = np.empty((Config.MAX_NUM_AGENTS_IN_ENVIRONMENT))
                 # print("self.env.latest_observation:", self.env.latest_observation)
                 for i, agent_observation in enumerate(self.env.latest_observations):
-                    if i not in self.env.game.which_agents_running_ga3c: continue
+                    # print("Agent: {}. Obs: {}".format(i, agent_observation))
+                    is_agent_running_ga3c = agent_observation[0]
+                    if not is_agent_running_ga3c:
+                        continue
+                    # if i not in self.env.game.which_agents_running_ga3c: continue
                     # Prediction
                     # print("[ProcessAgent]", "i:", i, "agent_observation:", agent_observation)
                     # p, v = self.predict(agent_observation)
@@ -139,14 +143,18 @@ class ProcessAgent(Process):
                     # Select action
                     action = self.select_action(prediction)
                     
+                    # print(action)
+
                     predictions[i] = prediction
                     values[i] = value
+                    # actions[i] = action
+
                     actions[i] = action
 
                     # print("action", actions[i])
                 # print("actions:", actions)
                 # Take action --> Receive reward, done (and also store self.env.previous_state for access below)
-                rewards, which_agents_done, game_over = self.env.step(actions, self.pid, self.count)
+                rewards, game_over, infos = self.env.step([actions], self.pid, self.count)
 
                 # Only use 1st agent's experience for learning # TODO: Use 2nd agent too
 
@@ -161,8 +169,14 @@ class ProcessAgent(Process):
             #     # Take action --> Receive reward, done (and also store self.env.previous_state for access below)
             #     reward, done = self.env.step(action, self.pid, self.count)
 
-            for i in range(len(which_agents_done)): # Loop through all feedback from environment (which may not be equal to Config.MAX_NUM_AGENTS)
-                if i not in self.env.game.which_agents_running_ga3c: continue
+            which_agents_done = infos[0]['which_agents_done']
+            which_agents_learning = infos[0]['which_agents_learning']
+            num_agents_running_ga3c = np.sum(list(which_agents_learning.values()))
+            for i in which_agents_done.keys():
+                # Loop through all feedback from environment (which may not be equal to Config.MAX_NUM_AGENTS)
+                if not which_agents_learning[i]:
+                    continue
+
                 # Reward
                 reward_sum_logger[i] += rewards[i]
 
@@ -173,10 +187,10 @@ class ProcessAgent(Process):
                 done = which_agents_done[i]
                 # Add to experience
                 if Config.GAME_CHOICE == Config.game_collision_avoidance:
-                    exp = Experience(self.env.previous_state[0,i,:], None,
+                    exp = Experience(self.env.previous_state[0,i,:],
                                      action, prediction, reward, done)
                 else:
-                    exp = Experience(self.env.previous_state, None,
+                    exp = Experience(self.env.previous_state,
                                      action, prediction, reward, done)
 
                 if Config.DEBUG: print('[ DEBUG ] ProcessAgent::previous_state.shape: {}'.format(np.shape(self.env.previous_state)))
@@ -197,7 +211,7 @@ class ProcessAgent(Process):
 
                     if Config.GAME_CHOICE == Config.game_collision_avoidance:
                         x_, r_, a_ = self.convert_to_nparray(updated_exps[i])# NOTE if Config::USE_AUDIO == False, audio_ is None
-                        yield x_, r_, a_, reward_sum_logger[i] / self.env.game.num_agents_running_ga3c # sends back data without quitting the current fcn
+                        yield x_, r_, a_, reward_sum_logger[i] / num_agents_running_ga3c # sends back data without quitting the current fcn
                     else:
                         x_, r_, a_ = self.convert_to_nparray(updated_exps) # NOTE if Config::USE_AUDIO == False, audio_ is None
                         yield x_, r_, a_, init_rnn_state, reward_sum_logger # Sends back data and starts here next time fcn is called

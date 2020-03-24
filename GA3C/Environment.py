@@ -31,14 +31,14 @@ if sys.version_info >= (3,0): from queue import Queue
 else: from Queue import Queue
 import numpy as np
 import scipy.misc as misc
-from Config import Config
+from Config import GA3CConfig; Config = GA3CConfig()
 
 
 class Environment:
     def __init__(self, id):
         self._set_env(id)
         
-        self.nb_frames    = Config.STACKED_FRAMES
+        self.nb_frames    = 1
         self.frame_q      = Queue(maxsize=self.nb_frames)
         self.total_reward = 0
 
@@ -53,8 +53,7 @@ class Environment:
         elif Config.GAME_CHOICE == Config.game_collision_avoidance:
             from gym_collision_avoidance.experiments.src.env_utils import run_episode, create_env, store_stats
             env, one_env = create_env()
-            self.game = one_env            
-            # self.game = CollisionAvoidance()
+            self.game = env
         else: 
             raise ValueError("[ ERROR ] Invalid choice of game. Check Config.py for choices")
 
@@ -79,35 +78,34 @@ class Environment:
         self.frame_q.put(frame)
         if Config.DEBUG: print('[ DEBUG ] Environment::frame_q size is): {}'.format(self.frame_q.qsize()))
 
+    def _process_obs(self, observations):
+        observations_ = observations[0]
+        self.latest_observations = observations_
+        self._update_frame_q(observations_[:,1:])
+        self.previous_state = self.current_state
+        self.current_state = self._get_current_state()
+
+        # for agent_observation in observations:
+        #     # only use host agent's observations for training
+        #     if agent_observation[0] == 0:
+        #         self._update_frame_q(agent_observation[1:])
+
     def reset(self):
         if Config.DEBUG: print('[ DEBUG ] Environment::reset()')
         self.total_reward = 0
         self.frame_q.queue.clear()
 
-        self._update_frame_q(self.game.reset())
-        self.previous_state = self.current_state = None
+        observations = self.game.reset()
+        self._process_obs(observations)
+        # self.previous_state = self.current_state = None
 
     def step(self, action, pid, count):
         if Config.DEBUG: print('[ DEBUG ] Environment::step()')
-        observations, rewards, which_agents_done, game_over = self.game.step(action)
+        observations, rewards, game_over, info = self.game.step(action)
         self.total_reward += np.sum(rewards)
+        self._process_obs(observations)
 
-        if Config.GAME_CHOICE == Config.game_collision_avoidance:
-            self.latest_observations = observations
-            self._update_frame_q(observations[:,1:])
-            
-            # for agent_observation in observations:
-            #     # only use host agent's observations for training
-            #     if agent_observation[0] == 0:
-            #         self._update_frame_q(agent_observation[1:])
-
-        image = observation
-        self._update_frame_q(image)
-
-        self.previous_state = self.current_state
-        self.current_state = self._get_current_state()
-
-        return rewards, which_agents_done, game_over
+        return rewards, game_over, info
 
     def print_frame_q(self):
         return self.frame_q.qsize()

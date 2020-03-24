@@ -26,7 +26,7 @@
 
 import numpy as np
 from threading import Thread
-from Config import Config
+from Config import GA3CConfig; Config = GA3CConfig()
 
 
 class ThreadTrainer(Thread):
@@ -64,7 +64,7 @@ class ThreadTrainer(Thread):
                         a__ = np.concatenate((a__, a_))
                     batch_size += image_.shape[0]
             
-            if Config.TRAIN_MODELS:
+            if Config.TRAIN_MODE:
                 if Config.GAME_CHOICE == Config.game_collision_avoidance:
                     # self.server.train_model(agent_states__[:,0,:], None, r__, a__, self.id)
                     self.server.train_model(agent_states__, r__, a__, self.id)

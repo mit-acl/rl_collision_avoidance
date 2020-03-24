@@ -26,7 +26,7 @@
 
 import time
 import numpy as np
-from Config import Config
+from Config import GA3CConfig; Config = GA3CConfig()
 
 
 class ThreadDynamicAdjustment():

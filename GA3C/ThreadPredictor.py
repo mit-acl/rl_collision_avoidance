@@ -25,7 +25,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import numpy as np
-from Config import Config
+from Config import GA3CConfig; Config = GA3CConfig()
 from threading import Thread
 
 
@@ -42,6 +42,7 @@ class ThreadPredictor(Thread):
         if Config.USE_IMAGE == True:
             states_image = np.zeros((Config.PREDICTION_BATCH_SIZE, Config.IMAGE_HEIGHT, Config.IMAGE_WIDTH, Config.STACKED_FRAMES), dtype=np.float32)
         if Config.GAME_CHOICE == Config.game_collision_avoidance:
+            # states_agent = np.zeros((Config.PREDICTION_BATCH_SIZE, 11), dtype=np.float32)
             states_agent = np.zeros((Config.PREDICTION_BATCH_SIZE, Config.NN_INPUT_SIZE), dtype=np.float32)
 
         while not self.exit_flag:

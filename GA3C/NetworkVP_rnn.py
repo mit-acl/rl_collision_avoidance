@@ -30,8 +30,7 @@ import numpy as np
 import tensorflow as tf
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 from NetworkVPCore import NetworkVPCore
-
-from Config import Config
+from Config import GA3CConfig; Config = GA3CConfig()
 
 class NetworkVP_rnn(NetworkVPCore):
     def __init__(self, device, model_name, num_actions):
