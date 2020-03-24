@@ -84,10 +84,7 @@ class ProcessAgent(Process):
         a_ = np.eye(self.num_actions)[np.array([exp.action for exp in experiences], dtype=np.int32)].astype(np.float32)
         r_ = np.array([exp.reward for exp in experiences])
 
-        if Config.GAME_CHOICE == Config.game_collision_avoidance:
-            return x_, r_, a_
-        else:
-            return x_, None, r_, a_
+        return x_, r_, a_
 
     def predict(self, current_state):
         # put the state in the prediction q
@@ -124,50 +121,32 @@ class ProcessAgent(Process):
             #     # self.count += 1
             #     continue
 
-            if Config.GAME_CHOICE == Config.game_collision_avoidance:
-                actions = {}
+            actions = {}
+            predictions = np.empty((Config.MAX_NUM_AGENTS_IN_ENVIRONMENT,Config.NUM_ACTIONS))
+            values = np.empty((Config.MAX_NUM_AGENTS_IN_ENVIRONMENT))
 
-                predictions = np.empty((Config.MAX_NUM_AGENTS_IN_ENVIRONMENT,Config.NUM_ACTIONS))
-                values = np.empty((Config.MAX_NUM_AGENTS_IN_ENVIRONMENT))
-                # print("self.env.latest_observation:", self.env.latest_observation)
-                for i, agent_observation in enumerate(self.env.latest_observations):
-                    # print("Agent: {}. Obs: {}".format(i, agent_observation))
-                    is_agent_running_ga3c = agent_observation[0]
-                    if not is_agent_running_ga3c:
-                        continue
-                    # if i not in self.env.game.which_agents_running_ga3c: continue
-                    # Prediction
-                    # print("[ProcessAgent]", "i:", i, "agent_observation:", agent_observation)
-                    # p, v = self.predict(agent_observation)
-                    prediction, value = self.predict(agent_observation)
-                    # Select action
-                    action = self.select_action(prediction)
-                    
-                    # print(action)
+            for i, agent_observation in enumerate(self.env.latest_observations):
+                # print("Agent: {}. Obs: {}".format(i, agent_observation))
+                is_agent_running_ga3c = agent_observation[0]
+                # print("is_agent_running_ga3c: {}".format(is_agent_running_ga3c))
+                if not is_agent_running_ga3c:
+                    continue
 
-                    predictions[i] = prediction
-                    values[i] = value
-                    # actions[i] = action
+                # Prediction
+                # print("[ProcessAgent]", "i:", i, "agent_observation:", agent_observation)
+                prediction, value = self.predict(agent_observation)
 
-                    actions[i] = action
+                # Select action
+                action = self.select_action(prediction)
 
-                    # print("action", actions[i])
-                # print("actions:", actions)
-                # Take action --> Receive reward, done (and also store self.env.previous_state for access below)
-                rewards, game_over, infos = self.env.step([actions], self.pid, self.count)
+                predictions[i] = prediction
+                values[i] = value
+                actions[i] = action
 
-                # Only use 1st agent's experience for learning # TODO: Use 2nd agent too
-
-
-            # else:
-            #     # Prediction
-            #     prediction, value = self.predict(self.env.current_state)
-
-            #     # Select action
-            #     action = self.select_action(prediction)
-
-            #     # Take action --> Receive reward, done (and also store self.env.previous_state for access below)
-            #     reward, done = self.env.step(action, self.pid, self.count)
+                # print("action", actions[i])
+            # print("actions:", actions)
+            # Take action --> Receive reward, done (and also store self.env.previous_state for access below)
+            rewards, game_over, infos = self.env.step([actions], self.pid, self.count)
 
             rewards = rewards[0] # Only use 1 env from VecEnv
             if Config.TRAIN_SINGLE_AGENT:
@@ -176,7 +155,11 @@ class ProcessAgent(Process):
             which_agents_done = infos[0]['which_agents_done']
             which_agents_learning = infos[0]['which_agents_learning']
             num_agents_running_ga3c = np.sum(list(which_agents_learning.values()))
-            for i in which_agents_done.keys():
+
+            # print("which_agents_done: {}".format(which_agents_done))
+            # print("which_agents_learning: {}".format(which_agents_learning))
+
+            for i in which_agents_learning.keys():
                 # Loop through all feedback from environment (which may not be equal to Config.MAX_NUM_AGENTS)
                 if not which_agents_learning[i]:
                     continue
@@ -190,6 +173,7 @@ class ProcessAgent(Process):
                 reward = rewards[i]
                 done = which_agents_done[i]
                 # Add to experience
+
                 exp = Experience(self.env.previous_state[0,i,:],
                                  action, prediction, reward, done)
 

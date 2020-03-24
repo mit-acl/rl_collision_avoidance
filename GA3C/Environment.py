@@ -79,11 +79,19 @@ class Environment:
         if Config.DEBUG: print('[ DEBUG ] Environment::frame_q size is): {}'.format(self.frame_q.qsize()))
 
     def _process_obs(self, observations):
-        observations_ = observations[0]
+        # print("[_process_obs]")
+        # print("observations: {}".format(observations))
+        observations_ = observations[0] # undo vecenv
+        if observations_.ndim == 3:
+            observations_ = observations_[0] # undo multiagentvecenv wrapper
+        # print("observations_: {}".format(observations_))
         self.latest_observations = observations_
         self._update_frame_q(observations_[:,1:])
         self.previous_state = self.current_state
         self.current_state = self._get_current_state()
+        # print("self.previous_state: {}".format(self.previous_state))
+        # print("self.current_state: {}".format(self.current_state))
+        # assert(0)
 
         # for agent_observation in observations:
         #     # only use host agent's observations for training
