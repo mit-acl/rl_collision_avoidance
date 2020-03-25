@@ -17,18 +17,9 @@ class NetworkVPCore(object):
             from wandb.tensorflow import WandbHook
             wandb.init(project=Config.WANDB_PROJECT_NAME, dir=self.wandb_dir)
             for attr, value in Config.__dict__.items():
+                # wandb can't handle np objs, but otherwise send it all
                 if type(value) in [bool, int, float, list, str, tuple]:
                     wandb.config.update({attr: value})
-                # else:
-                #     print("***not adding: {}, {}. {}.".format(attr, value, type(value)))
-            # wandb.config.update({'MAX_NUM_AGENTS_IN_ENVIRONMENT': Config.MAX_NUM_AGENTS_IN_ENVIRONMENT})
-            # wandb.config.update({'MAX_NUM_AGENTS_TO_SIM': Config.MAX_NUM_AGENTS_TO_SIM})
-            # wandb.config.update({'DISCOUNT': Config.DISCOUNT})
-            # wandb.config.update({'SOCIAL_NORMS': Config.SOCIAL_NORMS})
-            # wandb.config.update({'AGENT_SORTING_METHOD': Config.AGENT_SORTING_METHOD})
-            # wandb.config.update({'LOAD_FROM_WANDB_RUN_ID': Config.LOAD_FROM_WANDB_RUN_ID})
-            # wandb.config.update({'LOAD_EPISODE': Config.LOAD_EPISODE})
-            # wandb.config.update({'LOAD_REGRESSION': Config.LOAD_REGRESSION})
             wandb.save(os.path.join(wandb.run.dir,"checkpoints/network*"), base_path=wandb.run.dir)
             self.wandb_log = wandb.log
             self.save_dir = wandb.run.dir
