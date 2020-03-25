@@ -1,0 +1,21 @@
+network_02360000: RNN network, pre-trained on CADRL, 2-3-4-agent test cases with static/non-coop agents, achieves 0.95 rolling reward, version in paper as of 2/21/18, requires larger action space
+network_03885000: RNN network, pre-trained on CADRL, 2-3-4-agent test cases with static/non-coop agents, achieves 0.9 rolling reward, has front social zone penalty
+network_02830001: RNN network, pre-trained on CADRL, 2-3-4-agent test cases with static/non-coop agents, achieves 0.94 rolling reward, correct min/max heading action
+
+network_01900000: version in IROS'18 paper.
+
+##################
+### IMPORTANT:
+There was a commit on 2-23-18 that says added social zones. on 6-26-19 mfe tagged this as 2018-iros, but it wasn't really the version that was used to generate iros plots
+- there were some key changes btwn 2-23-18 and 2-27-18 when the paper was submitted that live in the next commit. But there are also some random changes mfe made
+when experimenting months later.
+
+1239000: rnn, 2-4 agents, after mfe changes trying to dulicate results. 0.9 rolling reward.
+
+
+
+###
+what i think happened to create iros results...
+2-27-18:
+12AM-1PM (possibly from ) achieve .90-.91 rolling reward at 1pm (13 hrs)
+10PM-9AM start from 1PM network?, train on 10 agents, achieve .93 rolling reward (11 hrs)

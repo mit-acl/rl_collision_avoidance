@@ -1,0 +1,28 @@
+# This gitignore is set up to ignore everything except two "special"
+# checkpoint directories (regression/wandb/run-dummy and RL/wandb/run-2018-backup)
+
+# Ignore all the crap wandb creates, which shouldn't go under version ctrl
+*.patch
+*.log
+*requirements.txt
+wandb-*
+code
+
+# Ignore everything in RL and regression EXCEPT the two dirs
+RL/wandb/*
+!RL/wandb/run-2018-backup
+RL/wandb/run-2018-backup/checkpoints/*
+regression/wandb/*
+!regression/wandb/run-dummy
+regression/wandb/run-dummy/checkpoints/*
+
+# If you want to add a run into git, just add two lines like this:
+# !RL/wandb/run-20200325_204353-3crb139r
+# RL/wandb/run-20200325_204353-3crb139r/checkpoints/*
+
+# Within the two dirs of interest, keep only these types of files:
+!*checkpoint
+!*index.txt
+!*.index
+!*.meta
+!*.data-00000-of-00001

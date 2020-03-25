@@ -46,7 +46,7 @@ class TrainPhase1(EnvConfig):
         ### GENERAL PARAMETERS
         self.game_grid, self.game_ale, self.game_collision_avoidance = range(3) # Initialize game types as enum
         self.GAME_CHOICE         = self.game_collision_avoidance # Game choice: Either "game_grid" or "game_ale" or "game_collision_avoidance"
-        self.USE_WANDB = False
+        self.USE_WANDB = True
         self.WANDB_PROJECT_NAME = "ga3c_cadrl"
         self.DEBUG               = False # Enable debug (prints more information for debugging purpose)
         self.RANDOM_SEED_1000 = 0 # np.random.seed(this * 1000 + env_id)

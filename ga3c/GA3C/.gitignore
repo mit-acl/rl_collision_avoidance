@@ -1,4 +1,5 @@
 *.zip
-checkpoints
 results.txt
 logs
+wandb/debug.log
+wandb/settings
