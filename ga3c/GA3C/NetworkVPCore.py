@@ -20,11 +20,11 @@ class NetworkVPCore(object):
                 # wandb can't handle np objs, but otherwise send it all
                 if type(value) in [bool, int, float, list, str, tuple]:
                     wandb.config.update({attr: value})
-            wandb.save(os.path.join(wandb.run.dir,"checkpoints/network*"), base_path=wandb.run.dir)
             self.wandb_log = wandb.log
-            self.save_dir = wandb.run.dir
+            self.checkpoints_save_dir = os.path.join(wandb.run.dir,"checkpoints")
+            wandb.save(os.path.join(self.checkpoints_save_dir,"network*"), base_path=wandb.run.dir)
         else:
-            self.save_dir = os.path.dirname(os.path.realpath(__file__)) + '/checkpoints/RL_tmp'
+            self.checkpoints_save_dir = os.path.dirname(os.path.realpath(__file__)) + '/checkpoints/RL_tmp'
 
         # Initialize DNN TF computation graph
         self.device = device
@@ -49,7 +49,7 @@ class NetworkVPCore(object):
                 self.sess.run(tf.compat.v1.global_variables_initializer())
 
                 if Config.TENSORBOARD: self._create_tensor_board()
-                if Config.LOAD_CHECKPOINT or Config.SAVE_MODELS:
+                if Config.LOAD_RL_THEN_TRAIN_RL or Config.LOAD_REGRESSION_THEN_TRAIN_RL or Config.SAVE_MODELS:
                     vars = tf.compat.v1.global_variables()
                     self.saver = tf.compat.v1.train.Saver({var.name: var for var in vars}, max_to_keep=0)
 
@@ -214,34 +214,31 @@ class NetworkVPCore(object):
         if not Config.PLAY_MODE and not Config.EVALUATE_MODE and Config.USE_WANDB:
             self.wandb_log({'reward': reward, 'roll_reward': roll_reward, 'step': step})
 
-    def _checkpoint_filename(self, episode, learning_method='RL', from_backup = False, wandb_runid=None):
-        if from_backup:
-            # Checkpoint exists in the RL_backup folder
-            return 'checkpoints/%s_backup/%s_%08d' % (learning_method, self.model_name, episode)
-        if learning_method == 'RL':
-            if wandb_runid is None:
-                # Not loading from a previous WandB experiment
-                return os.path.join(self.save_dir, '%s_%08d' % (self.model_name, episode))
-            else:
-                # Loading from a previous WandB experiment
-                dir_to_load_from = os.path.join(os.path.join(self.wandb_dir, 'wandb'), wandb_runid)
-                return os.path.join(dir_to_load_from, 'checkpoints/%s_%08d' % (self.model_name, episode))
-        return 'checkpoints/%s/%s_%08d' % (learning_method, self.model_name, episode)
+    def _checkpoint_filename(self, episode, mode='save', learning_method='RL', wandb_runid_for_loading=None):
+        if mode == 'save':
+            d = self.checkpoints_save_dir
+        elif mode == 'load':
+            d = os.path.join(os.path.dirname(os.path.realpath(__file__)), "checkpoints", learning_method, 'wandb', wandb_runid_for_loading, 'checkpoints')
+        else:
+            raise NotImplementedError
+
+        path = os.path.join(d, '%s_%08d' % (self.model_name, episode))
+        
+        return path
 
     def _get_episode_from_filename(self, filename):
         # TODO: hacky way of getting the episode. ideally episode should be stored as a TF variable
         return int(re.split('/|_|\.', filename)[-1])
 
     def save(self, episode, learning_method='RL'):
-        self.saver.save(self.sess, self._checkpoint_filename(episode, learning_method))
+        self.saver.save(self.sess, self._checkpoint_filename(episode, learning_method=learning_method, mode='save'))
 
     def load(self, learning_method='RL'):
 
-        if Config.LOAD_EPISODE > 0:
-            print("[NetworkVPCore] Want to load episode #:", Config.LOAD_EPISODE)
-            filename = self._checkpoint_filename(Config.LOAD_EPISODE, from_backup = Config.LOAD_FROM_BACKUP_DIR, wandb_runid = Config.LOAD_FROM_WANDB_RUN_ID)
+        if Config.EPISODE_NUMBER_TO_LOAD > 0:
+            filename = self._checkpoint_filename(Config.EPISODE_NUMBER_TO_LOAD, mode='load', wandb_runid_for_loading=Config.LOAD_FROM_WANDB_RUN_ID)
         else:
-            filename = tf.train.latest_checkpoint(os.path.dirname(self._checkpoint_filename(episode=0, learning_method=learning_method)))
+            filename = tf.train.latest_checkpoint(os.path.dirname(self._checkpoint_filename(episode=0, mode='load', learning_method=learning_method, wandb_runid_for_loading=Config.LOAD_FROM_WANDB_RUN_ID)))
 
         print("[NetworkVPCore] Loading checkpoint file:", filename)
         self.saver.restore(self.sess, filename)
@@ -249,10 +246,11 @@ class NetworkVPCore(object):
         return self._get_episode_from_filename(filename)
 
     def train_with_regression(self, dataset_ped_train, dataset_ped_test):
-        filename = tf.train.latest_checkpoint(os.path.dirname(self._checkpoint_filename(episode=0)))
 
-        if Config.LOAD_EPISODE > 0:
-            filename = self._checkpoint_filename(Config.LOAD_EPISODE)
+        if Config.EPISODE_NUMBER_TO_LOAD > 0:
+            filename = self._checkpoint_filename(Config.EPISODE_NUMBER_TO_LOAD, mode='load', wandb_runid_for_loading=Config.LOAD_FROM_WANDB_RUN_ID)
+        else:
+            filename = tf.train.latest_checkpoint(os.path.dirname(self._checkpoint_filename(episode=0, mode='load', wandb_runid_for_loading=Config.LOAD_FROM_WANDB_RUN_ID)))
         self.saver.restore(self.sess, filename)
 
         return self._get_episode_from_filename(filename)

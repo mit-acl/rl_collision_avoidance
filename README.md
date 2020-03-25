@@ -15,16 +15,17 @@ cd rl_collision_avoidance
 ./install.sh
 ```
 
-### Minimum working example
+### Train RL (starting with a network initialized through supervised learning on CADRL decisions)
 
-To start a GA3C training run:
+To start a GA3C training run (it should get approx -0.05-0.05 rolling reward to start):
 ```bash
-./example.sh
+./train.sh TrainPhase1
 ```
 
-
-
-
+To load that checkpoint and continue phase 2 of training, update the `LOAD_FROM_WANDB_RUN_ID` path in `Config.py` and do:
+```bash
+./train.sh TrainPhase2
+```
 
 ### If you find this code useful, please consider citing:
 

@@ -55,16 +55,16 @@ class Server:
 
         print("[Server] Making model...")
         self.model = self.make_model()
-        if Config.TRAIN_WITH_REGRESSION:
-            print("[Server] Training with Regression.")
+
+        if Config.LOAD_NOTHING_THEN_TRAIN_REGRESSION_THEN_RL:
+            print("[Server] Training Regression Then RL.")
             Regression(self.model, Config.MAX_NUM_AGENTS_IN_ENVIRONMENT, self.actions).train_model()
-        elif Config.LOAD_REGRESSION:
-            print("[Server] Loading Regression Model.")
-            # self.stats.episode_count.value = self.model.load(learning_method='regression')
+        elif Config.LOAD_REGRESSION_THEN_TRAIN_RL:
+            print("[Server] Loading Regression Model then training RL.")
             self.model.load(learning_method='regression')
             self.stats.episode_count.value = 0
-        elif Config.LOAD_CHECKPOINT: 
-            print("[Server] Loading RL Checkpoint Model.")
+        elif Config.LOAD_RL_THEN_TRAIN_RL:
+            print("[Server] Loading RL Checkpoint Model then training more RL.")
             self.stats.episode_count.value = self.model.load(learning_method='RL')
 
         self.training_step      = 0

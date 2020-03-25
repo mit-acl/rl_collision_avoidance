@@ -28,12 +28,19 @@ import numpy as np
 
 from gym_collision_avoidance.envs.config import Config as EnvConfig
 
-class Train(EnvConfig):
-    def __init__(self):
-        ### GA3C-SPECIFIC SETTINGS THAT INFLUENCE ENVIRONMENT CONFIGS
-        # TODO: Find a way to force env config.py to inherit from a parent config.py
-        self.TRAINING_PHASE = 1
 
+class TrainPhase1(EnvConfig):
+    def __init__(self):
+        ### PARAMETERS THAT OVERWRITE/IMPACT THE ENV'S PARAMETERS
+        if not hasattr(self, "MAX_NUM_AGENTS_IN_ENVIRONMENT"):
+            self.MAX_NUM_AGENTS_IN_ENVIRONMENT = 4
+        if not hasattr(self, "MAX_NUM_AGENTS_TO_SIM"):
+            self.MAX_NUM_AGENTS_TO_SIM = 4
+
+        self.STATES_IN_OBS = ['is_learning', 'num_other_agents', 'dist_to_goal', 'heading_ego_frame', 'pref_speed', 'radius', 'other_agents_states']
+        self.STATES_NOT_USED_IN_POLICY = ['is_learning']
+
+        ### INITIALIZE THE ENVIRONMENT'S PARAMETERS
         EnvConfig.__init__(self)
 
         ### GENERAL PARAMETERS
@@ -64,20 +71,19 @@ class Train(EnvConfig):
         self.NUM_ACTIONS = 11
 
         ### CHECKPOINT LOADING
-        self.LOAD_CHECKPOINT     = True # Load old models. Throws if the model doesn't exist
-        self.LOAD_FROM_BACKUP_DIR= False
-        self.LOAD_FROM_WANDB_RUN_ID = 'run-20190817_074248-4qw1fcd9'
-        # LOAD_EPISODE        = 2360000 # this is one of the files on the cadrl_ros github
-        # LOAD_EPISODE        = 1653000 # this is one of the files on the cadrl_ros github
-        # LOAD_EPISODE        = 2830001
-        # LOAD_EPISODE        = 1900000 # 2018-IROS GA3C-10
-        # LOAD_EPISODE        = 1491000 # 2018-IROS GA3C-4 (only trained on 2-4 agents... does not exist?)
-        # LOAD_EPISODE        = 1239000 # trained from regression w/ 2-4 agents (took 12hrs)
-        # LOAD_EPISODE        = 1972000 # retrained on 6-28-19 w/ 10 agents (starting from 1239000, took 18hrs for last step)
-        # LOAD_EPISODE        = 1490000
-        self.LOAD_EPISODE        = 0
-        self.TRAIN_WITH_REGRESSION = False # Start training with regression phase before RL
-        self.LOAD_REGRESSION = True # Initialize training with regression network
+        self.LOAD_FROM_WANDB_RUN_ID = 'run-dummy'
+        # EPISODE_NUMBER_TO_LOAD        = 2360000 # this is one of the files on the cadrl_ros github
+        # EPISODE_NUMBER_TO_LOAD        = 1653000 # this is one of the files on the cadrl_ros github
+        # EPISODE_NUMBER_TO_LOAD        = 2830001
+        # EPISODE_NUMBER_TO_LOAD        = 1900000 # 2018-IROS GA3C-10
+        # EPISODE_NUMBER_TO_LOAD        = 1491000 # 2018-IROS GA3C-4 (only trained on 2-4 agents... does not exist?)
+        # EPISODE_NUMBER_TO_LOAD        = 1239000 # trained from regression w/ 2-4 agents (took 12hrs)
+        # EPISODE_NUMBER_TO_LOAD        = 1972000 # retrained on 6-28-19 w/ 10 agents (starting from 1239000, took 18hrs for last step)
+        # EPISODE_NUMBER_TO_LOAD        = 1490000
+        self.EPISODE_NUMBER_TO_LOAD        = 0
+        self.LOAD_RL_THEN_TRAIN_RL     = False
+        self.LOAD_NOTHING_THEN_TRAIN_REGRESSION_THEN_RL = False # Start from scratch, then train regression phase before RL
+        self.LOAD_REGRESSION_THEN_TRAIN_RL = True # Initialize training with regression network
 
         ### NETWORK
         self.NET_ARCH            = 'NetworkVP_rnn' # Neural net architecture
@@ -105,8 +111,6 @@ class Train(EnvConfig):
         self.TIME_MAX                = int(4/self.DT) # Tmax
         self.MAX_QUEUE_SIZE          = 100 # Max size of the queue
         self.PREDICTION_BATCH_SIZE   = 128
-        self.EPISODES                = 1500000 # Total number of episodes and annealing frequency
-        self.ANNEALING_EPISODE_COUNT = 1500000
         self.MIN_POLICY = 0.0 # Minimum policy
 
         # OPTIMIZER PARAMETERS
@@ -137,11 +141,17 @@ class Train(EnvConfig):
         self.RESULTS_FILENAME             = 'results.txt'# Results filename
         self.NETWORK_NAME                 = 'network'# Network checkpoint name
 
-        if self.TRAINING_PHASE == 1:
-            self.EPISODES                = 1500000 # Total number of episodes and annealing frequency
-            self.ANNEALING_EPISODE_COUNT = 1500000
-        elif self.TRAINING_PHASE == 2:
-            self.EPISODES                = 2000000 # Total number of episodes and annealing frequency
-            self.ANNEALING_EPISODE_COUNT = 2000000
+        self.EPISODES                = 1500000 # Total number of episodes and annealing frequency
+        self.ANNEALING_EPISODE_COUNT = 1500000
 
-
+class TrainPhase2(TrainPhase1):
+    def __init__(self):
+        self.MAX_NUM_AGENTS_IN_ENVIRONMENT = 10
+        self.MAX_NUM_AGENTS_TO_SIM = 10
+        TrainPhase1.__init__(self)
+        self.EPISODES                = 2000000
+        self.ANNEALING_EPISODE_COUNT = 2000000
+        self.LOAD_FROM_WANDB_RUN_ID = 'run-20200324_221727-2tz70xqi'
+        self.LOAD_RL_THEN_TRAIN_RL     = True
+        self.LOAD_REGRESSION_THEN_TRAIN_RL = False
+        self.EPISODE_NUMBER_TO_LOAD        = 1490000
