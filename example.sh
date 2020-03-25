@@ -11,5 +11,5 @@ print_header "Running example python script"
 
 # Experiment
 cd $DIR/GA3C
-wandb off
+# wandb off
 python GA3C.py

@@ -32,13 +32,14 @@ class GA3CConfig(Config):
     def __init__(self):
         ### GA3C-SPECIFIC SETTINGS THAT INFLUENCE ENVIRONMENT CONFIGS
         # TODO: Find a way to force env config.py to inherit from a parent config.py
+        self.TRAINING_PHASE = 1
 
         Config.__init__(self)
 
         ### GENERAL PARAMETERS
         self.game_grid, self.game_ale, self.game_collision_avoidance = range(3) # Initialize game types as enum
         self.GAME_CHOICE         = self.game_collision_avoidance # Game choice: Either "game_grid" or "game_ale" or "game_collision_avoidance"
-        self.USE_WANDB = False
+        self.USE_WANDB = True
         self.WANDB_PROJECT_NAME = "ga3c_cadrl"
         self.DEBUG               = False # Enable debug (prints more information for debugging purpose)
         self.RANDOM_SEED_1000 = 0 # np.random.seed(this * 1000 + env_id)
@@ -135,5 +136,12 @@ class GA3CConfig(Config):
         self.STAT_ROLLING_MEAN_WINDOW     = 1000 # The window to average stats
         self.RESULTS_FILENAME             = 'results.txt'# Results filename
         self.NETWORK_NAME                 = 'network'# Network checkpoint name
+
+        if self.TRAINING_PHASE == 1:
+            self.EPISODES                = 1500000 # Total number of episodes and annealing frequency
+            self.ANNEALING_EPISODE_COUNT = 1500000
+        elif self.TRAINING_PHASE == 2:
+            self.EPISODES                = 2000000 # Total number of episodes and annealing frequency
+            self.ANNEALING_EPISODE_COUNT = 2000000
 
 
