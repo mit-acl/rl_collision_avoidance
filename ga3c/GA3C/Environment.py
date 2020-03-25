@@ -31,7 +31,7 @@ if sys.version_info >= (3,0): from queue import Queue
 else: from Queue import Queue
 import numpy as np
 import scipy.misc as misc
-from Config import GA3CConfig; Config = GA3CConfig()
+from GA3C import Config
 
 
 class Environment:

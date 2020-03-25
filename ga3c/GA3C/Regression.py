@@ -2,7 +2,7 @@ import numpy as np
 import pickle
 # import util
 import time
-from Config import Config
+from GA3C import Config
 
 class Regression():
     def __init__(self, model, num_agents, actions):

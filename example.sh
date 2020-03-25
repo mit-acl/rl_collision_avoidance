@@ -10,6 +10,9 @@ print_header "Running example python script"
 # export CUDA_VISIBLE_DEVICES=-1
 
 # Experiment
-cd $DIR/GA3C
+export GYM_CONFIG_PATH=$DIR/ga3c/GA3C/Config.py
+export GYM_CONFIG_CLASS=Train
+
+cd $DIR/ga3c/GA3C
 # wandb off
-python GA3C.py
+python Run.py

@@ -26,7 +26,7 @@
 
 import time
 from multiprocessing import Queue
-from Config import GA3CConfig; Config = GA3CConfig()
+from GA3C import Config
 from ProcessAgent import ProcessAgent
 from NetworkVP_rnn import NetworkVP_rnn
 from ProcessStats import ProcessStats

@@ -25,7 +25,7 @@
 # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import numpy as np
-from Config import GA3CConfig; Config = GA3CConfig()
+from GA3C import Config
 from threading import Thread
 
 

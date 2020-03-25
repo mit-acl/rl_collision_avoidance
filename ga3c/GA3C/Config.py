@@ -26,20 +26,20 @@
 
 import numpy as np
 
-from gym_collision_avoidance.envs.config import Config
+from gym_collision_avoidance.envs.config import Config as EnvConfig
 
-class GA3CConfig(Config):
+class Train(EnvConfig):
     def __init__(self):
         ### GA3C-SPECIFIC SETTINGS THAT INFLUENCE ENVIRONMENT CONFIGS
         # TODO: Find a way to force env config.py to inherit from a parent config.py
         self.TRAINING_PHASE = 1
 
-        Config.__init__(self)
+        EnvConfig.__init__(self)
 
         ### GENERAL PARAMETERS
         self.game_grid, self.game_ale, self.game_collision_avoidance = range(3) # Initialize game types as enum
         self.GAME_CHOICE         = self.game_collision_avoidance # Game choice: Either "game_grid" or "game_ale" or "game_collision_avoidance"
-        self.USE_WANDB = True
+        self.USE_WANDB = False
         self.WANDB_PROJECT_NAME = "ga3c_cadrl"
         self.DEBUG               = False # Enable debug (prints more information for debugging purpose)
         self.RANDOM_SEED_1000 = 0 # np.random.seed(this * 1000 + env_id)

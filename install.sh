@@ -27,7 +27,7 @@ $DIR/gym-collision-avoidance/install.sh false false
 
 # # Install this pkg and its requirements
 python -m pip install -r requirements.txt
-# python -m pip install -e .
+python -m pip install -e ga3c
 
 # export PYTHONPATH=/home/mfe/code/carrl/venv/lib/python3.5/site-packages
 

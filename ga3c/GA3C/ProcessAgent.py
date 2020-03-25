@@ -28,7 +28,7 @@ import time
 import numpy as np
 from datetime import datetime
 from multiprocessing import Process, Queue, Value
-from Config import GA3CConfig; Config = GA3CConfig()
+from GA3C import Config
 from Environment import Environment
 from Experience import Experience
 import pickle

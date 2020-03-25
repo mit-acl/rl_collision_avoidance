@@ -27,46 +27,47 @@
 # check python version; warn if not Python3
 import sys, warnings
 # if sys.version_info < (3,0): warnings.warn("Optimized for Python3. Performance may suffer under Python2.", Warning)
-from Config import GA3CConfig; Config = GA3CConfig()
+from GA3C import Config
+
 from Server import Server
 
-# Parse arguments
-for i in range(1, len(sys.argv)):
-	# Config arguments should be in format of Config=Value
-	# For setting booleans to False use Config=
-	x, y = sys.argv[i].split('=')
-	setattr(Config, x, type(getattr(Config, x))(y))
+# # Parse arguments
+# for i in range(1, len(sys.argv)):
+# 	# Config arguments should be in format of Config=Value
+# 	# For setting booleans to False use Config=
+# 	x, y = sys.argv[i].split('=')
+# 	setattr(Config, x, type(getattr(Config, x))(y))
 
-# Adjust configs for Play mode
-if Config.PLAY_MODE:
-	Config.DISPLAY_SCREEN = False
-	Config.AGENTS = 1
-	Config.PREDICTORS = 1
-	Config.TRAINERS = 1
-	Config.DYNAMIC_SETTINGS = False
-	Config.TRAIN_MODELS = False
-	Config.SAVE_MODELS = False
-	Config.PLOT_EPISODES = True
-	Config.USE_DROPOUT = False
-	Config.TRAIN_WITH_REGRESSION = False
-	Config.LOAD_CHECKPOINT = True
-	Config.LOAD_REGRESSION = True
-	Config.DT = 0.1
-if Config.EVALUATE_MODE:
-	Config.DISPLAY_SCREEN = False
-	Config.AGENTS = 1
-	Config.PREDICTORS = 1
-	Config.TRAINERS = 1
-	Config.DYNAMIC_SETTINGS = False
-	Config.LOAD_CHECKPOINT = True
-	Config.TRAIN_MODELS = False
-	Config.SAVE_MODELS = False
-	Config.PLOT_EPISODES = True
-	Config.USE_DROPOUT = False
-	Config.LOAD_CHECKPOINT = True
-	Config.LOAD_REGRESSION = False
-	Config.TRAIN_WITH_REGRESSION = False
-	Config.DT = 0.1
+# # Adjust configs for Play mode
+# if Config.PLAY_MODE:
+# 	Config.DISPLAY_SCREEN = False
+# 	Config.AGENTS = 1
+# 	Config.PREDICTORS = 1
+# 	Config.TRAINERS = 1
+# 	Config.DYNAMIC_SETTINGS = False
+# 	Config.TRAIN_MODELS = False
+# 	Config.SAVE_MODELS = False
+# 	Config.PLOT_EPISODES = True
+# 	Config.USE_DROPOUT = False
+# 	Config.TRAIN_WITH_REGRESSION = False
+# 	Config.LOAD_CHECKPOINT = True
+# 	Config.LOAD_REGRESSION = True
+# 	Config.DT = 0.1
+# if Config.EVALUATE_MODE:
+# 	Config.DISPLAY_SCREEN = False
+# 	Config.AGENTS = 1
+# 	Config.PREDICTORS = 1
+# 	Config.TRAINERS = 1
+# 	Config.DYNAMIC_SETTINGS = False
+# 	Config.LOAD_CHECKPOINT = True
+# 	Config.TRAIN_MODELS = False
+# 	Config.SAVE_MODELS = False
+# 	Config.PLOT_EPISODES = True
+# 	Config.USE_DROPOUT = False
+# 	Config.LOAD_CHECKPOINT = True
+# 	Config.LOAD_REGRESSION = False
+# 	Config.TRAIN_WITH_REGRESSION = False
+# 	Config.DT = 0.1
 
 
 # Start main program

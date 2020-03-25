@@ -2,7 +2,7 @@ import os
 import re
 import numpy as np
 import tensorflow as tf
-from Config import GA3CConfig; Config = GA3CConfig()
+from GA3C import Config
 
 
 class NetworkVPCore(object):
