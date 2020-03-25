@@ -9,4 +9,4 @@
 .vscode
 
 venv
-# wandb
+wandb/settings
