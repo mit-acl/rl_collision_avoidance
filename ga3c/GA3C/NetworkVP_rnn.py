@@ -72,8 +72,8 @@ class NetworkVP_rnn(NetworkVPCore):
             # Layer 1   - host agent gets its own set of weights
             #           - other agents share weights (since they are symmetric)
             ##############################################
-            self.host_agent_input = self.x_normalized[:,:Config.HOST_AGENT_STATE_SIZE]
-            host_agent_layer_1 = tf.layers.dense(inputs=self.host_agent_input, units=256, activation=tf.nn.relu, kernel_regularizer=regularizer, name = 'host_agent_layer1')
+            self.host_agent_vec = self.x_normalized[:,Config.FIRST_STATE_INDEX:Config.HOST_AGENT_STATE_SIZE+Config.FIRST_STATE_INDEX:]
+            host_agent_layer_1 = tf.layers.dense(inputs=self.host_agent_vec, units=256, activation=tf.nn.relu, kernel_regularizer=regularizer, name = 'host_agent_layer1')
             self.layer1 = host_agent_layer_1
             for i in range(Config.MAX_NUM_OTHER_AGENTS_OBSERVED):
                 other_agent_input = self.x_normalized[:,Config.HOST_AGENT_STATE_SIZE+Config.OTHER_AGENT_FULL_OBSERVATION_LENGTH*i:Config.HOST_AGENT_STATE_SIZE+Config.OTHER_AGENT_FULL_OBSERVATION_LENGTH*(i+1)]
@@ -82,7 +82,7 @@ class NetworkVP_rnn(NetworkVPCore):
                 other_agent_layer_1 = tf.layers.dense(inputs=other_agent_input, units=256, activation=tf.nn.relu, kernel_regularizer=regularizer, name = 'other_agent_layer1', reuse=reuse)
                 self.layer1 = tf.concat([self.layer1, other_agent_layer_1], axis=1)
         elif Config.MULTI_AGENT_ARCH in ['VANILLA','NONE']:
-            self.layer1 = tf.layers.dense(inputs=self.x_normalized, units=256, activation=tf.nn.relu, kernel_regularizer=regularizer, name = 'layer1')
+            self.layer1 = tf.layers.dense(inputs=self.x_normalized[:,Config.FIRST_STATE_INDEX:], units=256, activation=tf.nn.relu, kernel_regularizer=regularizer, name = 'layer1')
         else:
             print("[NetworkVP_rnn.py] Config.MULTI_AGENT_ARCH is not a valid option.")
             assert(0)
