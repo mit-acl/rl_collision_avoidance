@@ -31,7 +31,6 @@ class NetworkVPCore(object):
         self.model_name = model_name
         self.num_actions = num_actions
         self.learning_rate_rl = Config.LEARNING_RATE_RL_START
-        self.learning_rate_regression = Config.LEARNING_RATE_REGRESSION_START
         self.beta = Config.BETA_START
         self.log_epsilon = Config.LOG_EPSILON
 
@@ -194,7 +193,7 @@ class NetworkVPCore(object):
             # assert(0)
 
         elif learning_method == 'regression':
-            feed_dict.update({self.var_learning_rate: self.learning_rate_regression})
+            feed_dict.update({self.var_learning_rate: Config.LEARNING_RATE_REGRESSION_START})
             self.sess.run(self.train_regression_op, feed_dict=feed_dict)
 
     def log(self, x, y_r, a, reward, roll_reward):

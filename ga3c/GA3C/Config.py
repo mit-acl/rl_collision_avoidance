@@ -46,7 +46,7 @@ class TrainPhase1(EnvConfig):
         ### GENERAL PARAMETERS
         self.game_grid, self.game_ale, self.game_collision_avoidance = range(3) # Initialize game types as enum
         self.GAME_CHOICE         = self.game_collision_avoidance # Game choice: Either "game_grid" or "game_ale" or "game_collision_avoidance"
-        self.USE_WANDB = True
+        self.USE_WANDB = False
         self.WANDB_PROJECT_NAME = "ga3c_cadrl"
         self.DEBUG               = False # Enable debug (prints more information for debugging purpose)
         self.RANDOM_SEED_1000 = 0 # np.random.seed(this * 1000 + env_id)
@@ -81,23 +81,30 @@ class TrainPhase1(EnvConfig):
         # EPISODE_NUMBER_TO_LOAD        = 1972000 # retrained on 6-28-19 w/ 10 agents (starting from 1239000, took 18hrs for last step)
         # EPISODE_NUMBER_TO_LOAD        = 1490000
         self.EPISODE_NUMBER_TO_LOAD        = 0
-        self.LOAD_RL_THEN_TRAIN_RL     = False
-        self.LOAD_NOTHING_THEN_TRAIN_REGRESSION_THEN_RL = False # Start from scratch, then train regression phase before RL
-        self.LOAD_REGRESSION_THEN_TRAIN_RL = True # Initialize training with regression network
+
+
+        self.LOAD_RL_THEN_TRAIN_RL, self.TRAIN_ONLY_REGRESSION, self.LOAD_REGRESSION_THEN_TRAIN_RL = range(3)
+        self.TRAIN_VERSION = self.TRAIN_ONLY_REGRESSION
+        # self.LOAD_RL_THEN_TRAIN_RL     = False
+        # self.LOAD_NOTHING_THEN_TRAIN_REGRESSION_THEN_RL = False # Start from scratch, then train regression phase before RL
+        # self.LOAD_REGRESSION_THEN_TRAIN_RL = False # Initialize training with regression network
+        # self.TRAIN_ONLY_REGRESSION = True # Initialize training with regression network
 
         ### NETWORK
         self.NET_ARCH            = 'NetworkVP_rnn' # Neural net architecture
         self.ALL_ARCHS           = ['NetworkVP_rnn'] # Can add more model types here
         self.NORMALIZE_INPUT     = True
         self.USE_DROPOUT         = False
-        self.WEIGHT_SHARING      = False
         self.USE_REGULARIZATION  = True
-        self.MULTI_AGENT_ARCH = 'RNN'
+
+        # self.MULTI_AGENT_ARCH = 'RNN'
+        self.MULTI_AGENT_ARCH = 'WEIGHT_SHARING'
+        # self.MULTI_AGENT_ARCH = 'FC'
 
         #########################################################################
         # NUMBER OF AGENTS, PREDICTORS, TRAINERS, AND OTHER SYSTEM SETTINGS
         # IF THE DYNAMIC CONFIG IS ON, THESE ARE THE INITIAL VALUES
-        self.AGENTS                        = 32 # Number of Agents
+        self.AGENTS                        = 1 # Number of Agents
         self.PREDICTORS                    = 2 # Number of Predictors
         self.TRAINERS                      = 2 # Number of Trainers
         self.DEVICE                        = '/cpu:0' # Device
@@ -116,8 +123,6 @@ class TrainPhase1(EnvConfig):
         # OPTIMIZER PARAMETERS
         self.OPT_RMSPROP, self.OPT_ADAM   = range(2) # Initialize optimizer types as enum
         self.OPTIMIZER               = self.OPT_ADAM # Game choice: Either "game_grid" or "game_ale"
-        self.LEARNING_RATE_REGRESSION_START = 4e-5 # Learning rate
-        self.LEARNING_RATE_REGRESSION_END = 4e-5 # Learning rate
         self.LEARNING_RATE_RL_START     = 2e-5 # Learning rate
         self.LEARNING_RATE_RL_END     = 2e-5 # Learning rate
         self.RMSPROP_DECAY           = 0.99
@@ -155,3 +160,16 @@ class TrainPhase2(TrainPhase1):
         self.LOAD_RL_THEN_TRAIN_RL     = True
         self.LOAD_REGRESSION_THEN_TRAIN_RL = False
         self.EPISODE_NUMBER_TO_LOAD        = 1490000
+
+class TrainRegression(TrainPhase1):
+    def __init__(self):
+        self.MAX_NUM_AGENTS_IN_ENVIRONMENT = 4
+        TrainPhase1.__init__(self)
+        self.REGRESSION_BATCH_SIZE = 2000
+        self.REGRESSION_NUM_TRAINING_STEPS = 3000
+        self.REGRESSION_PLOT_STEP = 100
+
+        self.LEARNING_RATE_REGRESSION_START = 4e-5 # Learning rate
+        self.LEARNING_RATE_REGRESSION_END = 4e-5 # Learning rate
+
+

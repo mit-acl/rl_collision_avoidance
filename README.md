@@ -27,6 +27,14 @@ To load that checkpoint and continue phase 2 of training, update the `LOAD_FROM_
 ./train.sh TrainPhase2
 ```
 
+### Observed Issues
+If on OSX, when running the `./train.sh` script, you see:
+```bash
+objc[39391]: +[__NSCFConstantString initialize] may have been in progress in another thread when fork() was called.
+objc[39391]: +[__NSCFConstantString initialize] may have been in progress in another thread when fork() was called. We cannot safely call it or ignore it in the fork() child process. Crashing instead. Set a breakpoint on objc_initializeAfterForkError to debug.
+```
+just add this ENV_VAR: `export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES`.
+
 ### If you find this code useful, please consider citing:
 
 ```
