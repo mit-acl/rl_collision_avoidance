@@ -32,6 +32,17 @@ To load that checkpoint and continue phase 2 of training, update the `LOAD_FROM_
 ./train.sh TrainPhase2
 ```
 
+### To run experiments on AWS
+Start a bunch (e.g., 5) of AWS instances -- I used `c5.2xlarge` because they have 8vCPUs and 16GB RAM (somewhat like my desktop?).
+
+Add the IP addresses into `ga3c_cadrl_aws.sh`.
+```bash
+./ga3c_cadrl_aws.sh panes
+# C-a :setw synchronize-panes -- will let you enter the same command in each instance
+```
+
+Then you can follow the install & train instructions just like normal. When training, it will prompt you for a wandb login (can paste in the authorization code from app.wandb.ai/authorize).
+
 ### Observed Issues
 If on OSX, when running the `./train.sh` script, you see:
 ```bash
