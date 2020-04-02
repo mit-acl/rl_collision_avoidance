@@ -126,6 +126,7 @@ class Train(EnvConfig):
         self.TENSORBOARD_UPDATE_FREQUENCY = 100 # Update TensorBoard every X training steps
         self.SAVE_MODELS                  = True # Enable to save models every SAVE_FREQUENCY episodes
         self.SAVE_FREQUENCY               = 50000 # Save every SAVE_FREQUENCY episodes
+        self.SPECIAL_EPISODES_TO_SAVE = [] # Save these episode numbers, in addition to ad SAVE_FREQUENCY 
         self.PRINT_STATS_FREQUENCY        = 1 # Print stats every PRINT_STATS_FREQUENCY episodes
         self.STAT_ROLLING_MEAN_WINDOW     = 1000 # The window to average stats
         self.RESULTS_FILENAME             = 'results.txt'# Results filename
@@ -146,6 +147,8 @@ class TrainPhase1(Train):
         self.EPISODES                = 1500000 # Total number of episodes and annealing frequency
         self.ANNEALING_EPISODE_COUNT = 1500000
 
+        self.SPECIAL_EPISODES_TO_SAVE = [1490000, 1500000]
+
 class TrainPhase2(Train):
     def __init__(self):
         self.MAX_NUM_AGENTS_IN_ENVIRONMENT = 10
@@ -158,6 +161,7 @@ class TrainPhase2(Train):
         self.EPISODE_NUMBER_TO_LOAD        = 1450000
         # self.LOAD_FROM_WANDB_RUN_ID = 'run-20200324_221727-2tz70xqi'
         # self.EPISODE_NUMBER_TO_LOAD        = 1490000
+        self.SPECIAL_EPISODES_TO_SAVE = [1990000, 2000000]
 
 class TrainRegression(Train):
     def __init__(self):

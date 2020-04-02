@@ -85,7 +85,7 @@ class ProcessStats(Process):
 				first_time = old_episode_time
 			results_q.put((episode_time, reward, length))
 
-			if self.episode_count.value % Config.SAVE_FREQUENCY == 0:
+			if self.episode_count.value % Config.SAVE_FREQUENCY == 0 or self.episode_count.value in Config.SPECIAL_EPSISODES_TO_SAVE:
 				self.should_save_model.value = 1
 
 			# Print result to table

@@ -23,7 +23,23 @@ if $SOURCE_VENV; then
     export PYTHONPATH=${DIR}/venv/lib/python3.5/site-packages
 fi
 
+# Install Git LFS (if not already)
+if git lfs install | grep -q 'initialized'; then
+    if [ "$(uname)" == "Darwin" ]; then
+        # Do something under Mac OS X platform
+        brew install git-lfs
+        git lfs install
+    elif [ "$(expr substr $(uname -s) 1 5)" == "Linux" ]; then
+        # Do something under GNU/Linux platform
+        curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | sudo bash
+        sudo apt-get install git-lfs
+        git lfs install
+    fi
+    git lfs pull
+fi
+
 $DIR/gym-collision-avoidance/install.sh false false
+
 
 # # Install this pkg and its requirements
 python -m pip install -r requirements.txt
