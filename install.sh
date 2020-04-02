@@ -25,6 +25,8 @@ fi
 
 # Install Git LFS (if not already)
 if git lfs install | grep -q 'initialized'; then
+    echo "Git LFS already installed"
+else
     echo "Installing Git LFS and pulling"
     if [ "$(uname)" == "Darwin" ]; then
         # Do something under Mac OS X platform
