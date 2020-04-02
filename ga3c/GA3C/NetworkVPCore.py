@@ -200,7 +200,7 @@ class NetworkVPCore(object):
             feed_dict.update({self.var_learning_rate: Config.LEARNING_RATE_REGRESSION_START})
             self.sess.run(self.train_regression_op, feed_dict=feed_dict)
 
-    def log(self, x, y_r, a, reward, roll_reward):
+    def log(self, x, y_r, a, reward, roll_reward, episode):
         feed_dict = self.__get_base_feed_dict()
         feed_dict.update({self.x: x, self.y_r: y_r, self.action_index: a})
         step, summary = self.sess.run([self.global_step, self.summary_op], feed_dict=feed_dict)
@@ -215,7 +215,7 @@ class NetworkVPCore(object):
         self.log_writer.add_summary(summary, step)
 
         if not Config.PLAY_MODE and not Config.EVALUATE_MODE and Config.USE_WANDB:
-            self.wandb_log({'reward': reward, 'roll_reward': roll_reward, 'step': step})
+            self.wandb_log({'reward': reward, 'roll_reward': roll_reward, 'step': step, 'episode': episode})
 
     def _checkpoint_filename(self, episode, mode='save', learning_method='RL', wandb_runid_for_loading=None):
         if mode == 'save':

@@ -121,7 +121,7 @@ class Server:
         # Tensorboard logging
         if Config.TENSORBOARD and self.stats.training_count.value % Config.TENSORBOARD_UPDATE_FREQUENCY == 0:
             reward, roll_reward = self.stats.return_reward_log()
-            self.model.log(x_, r_, a_, reward, roll_reward)
+            self.model.log(x_, r_, a_, reward, roll_reward, self.stats.episode_count.value)
 
     def save_model(self):
         self.model.save(self.stats.episode_count.value)
