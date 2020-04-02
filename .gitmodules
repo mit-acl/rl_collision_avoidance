@@ -1,3 +1,3 @@
 [submodule "gym-collision-avoidance"]
 	path = gym-collision-avoidance
-	url = gym-collision-avoidance.git
+	url = ../gym-collision-avoidance.git
