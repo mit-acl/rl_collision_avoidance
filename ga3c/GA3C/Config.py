@@ -137,9 +137,9 @@ class TrainPhase1(Train):
         self.MAX_NUM_AGENTS_TO_SIM = 4
         Train.__init__(self)
         self.TRAIN_VERSION = self.LOAD_REGRESSION_THEN_TRAIN_RL
-        if self.MULTI_AGENT_ARCH == 'RNN':
+        if self.MULTI_AGENT_ARCH == self.MULTI_AGENT_ARCH_RNN:
             self.LOAD_FROM_WANDB_RUN_ID = 'run-rnn'
-        elif self.MULTI_AGENT_ARCH == 'WEIGHT_SHARING':
+        elif self.MULTI_AGENT_ARCH == self.MULTI_AGENT_ARCH_WEIGHT_SHARING:
             self.LOAD_FROM_WANDB_RUN_ID = 'run-ws'
         self.EPISODE_NUMBER_TO_LOAD = 0
 

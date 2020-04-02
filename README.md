@@ -10,7 +10,12 @@ M. Everett, Y. Chen, and J. P. How, "Motion Planning Among Dynamic, Decision-Mak
 
 Grab the code from github, initialize submodules, install dependencies and src code
 ```bash
+# Clone either through SSH or HTTPS
+# SSH
 git clone --recursive git@gitlab.com:mit-acl/ford_ugvs/planning_algorithms/cadrl/rl_collision_avoidance.git
+# HTTPS
+git clone --recursive https://gitlab.com/mit-acl/ford_ugvs/planning_algorithms/cadrl/rl_collision_avoidance.git
+
 cd rl_collision_avoidance
 ./install.sh
 ```
