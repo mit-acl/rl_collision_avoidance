@@ -8,13 +8,17 @@
 wandb-*
 code
 
+RL_tmp
+
 # Ignore everything in RL and regression EXCEPT the two dirs
 RL/wandb/*
 !RL/wandb/run-2018-backup
 RL/wandb/run-2018-backup/checkpoints/*
 regression/wandb/*
-!regression/wandb/run-dummy
-regression/wandb/run-dummy/checkpoints/*
+!regression/wandb/run-rnn
+regression/wandb/run-rnn/checkpoints/*
+!regression/wandb/run-ws
+regression/wandb/run-ws/checkpoints/*
 
 # If you want to add a run into git, just add two lines like this:
 # !RL/wandb/run-20200325_204353-3crb139r
