@@ -25,6 +25,7 @@ fi
 
 # Install Git LFS (if not already)
 if git lfs install | grep -q 'initialized'; then
+    echo "Installing Git LFS and pulling"
     if [ "$(uname)" == "Darwin" ]; then
         # Do something under Mac OS X platform
         brew install git-lfs
