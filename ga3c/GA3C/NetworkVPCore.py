@@ -9,7 +9,11 @@ class NetworkVPCore(object):
     def __init__(self, device, model_name, num_actions):
 
         # Set up wandb path (in case loading checkpt from certain runid)
-        self.wandb_dir = os.path.dirname(os.path.realpath(__file__)) + '/checkpoints/RL'
+        if Config.TRAIN_VERSION in [Config.LOAD_RL_THEN_TRAIN_RL, Config.LOAD_REGRESSION_THEN_TRAIN_RL]:
+            learning_method = 'RL'
+        elif Config.TRAIN_VERSION in [Config.TRAIN_ONLY_REGRESSION]:
+            learning_method = 'regression'
+        self.wandb_dir = os.path.dirname(os.path.realpath(__file__)) + '/checkpoints/' + learning_method
 
         # if training, add run to GA3C-CADRL project, add hyperparams and auto-upload checkpts
         if not Config.PLAY_MODE and not Config.EVALUATE_MODE and Config.USE_WANDB:

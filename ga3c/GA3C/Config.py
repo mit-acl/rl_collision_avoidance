@@ -28,8 +28,7 @@ import numpy as np
 
 from gym_collision_avoidance.envs.config import Config as EnvConfig
 
-
-class TrainPhase1(EnvConfig):
+class Train(EnvConfig):
     def __init__(self):
         ### PARAMETERS THAT OVERWRITE/IMPACT THE ENV'S PARAMETERS
         if not hasattr(self, "MAX_NUM_AGENTS_IN_ENVIRONMENT"):
@@ -40,13 +39,21 @@ class TrainPhase1(EnvConfig):
         self.STATES_IN_OBS = ['is_learning', 'num_other_agents', 'dist_to_goal', 'heading_ego_frame', 'pref_speed', 'radius', 'other_agents_states']
         self.STATES_NOT_USED_IN_POLICY = ['is_learning']
 
+        self.MULTI_AGENT_ARCH_RNN, self.MULTI_AGENT_ARCH_WEIGHT_SHARING = range(2)
+        self.MULTI_AGENT_ARCH = self.MULTI_AGENT_ARCH_WEIGHT_SHARING
+
+        if self.MULTI_AGENT_ARCH == self.MULTI_AGENT_ARCH_WEIGHT_SHARING:
+            self.MAX_NUM_OTHER_AGENTS_OBSERVED = 3
+        elif self.MULTI_AGENT_ARCH == self.MULTI_AGENT_ARCH_RNN:
+            self.MAX_NUM_OTHER_AGENTS_OBSERVED = self.MAX_NUM_AGENTS_IN_ENVIRONMENT - 1
+
         ### INITIALIZE THE ENVIRONMENT'S PARAMETERS
         EnvConfig.__init__(self)
 
         ### GENERAL PARAMETERS
         self.game_grid, self.game_ale, self.game_collision_avoidance = range(3) # Initialize game types as enum
         self.GAME_CHOICE         = self.game_collision_avoidance # Game choice: Either "game_grid" or "game_ale" or "game_collision_avoidance"
-        self.USE_WANDB = False
+        self.USE_WANDB = True
         self.WANDB_PROJECT_NAME = "ga3c_cadrl"
         self.DEBUG               = False # Enable debug (prints more information for debugging purpose)
         self.RANDOM_SEED_1000 = 0 # np.random.seed(this * 1000 + env_id)
@@ -70,25 +77,7 @@ class TrainPhase1(EnvConfig):
         ### ACTIONS
         self.NUM_ACTIONS = 11
 
-        ### CHECKPOINT LOADING
-        self.LOAD_FROM_WANDB_RUN_ID = 'run-dummy'
-        # EPISODE_NUMBER_TO_LOAD        = 2360000 # this is one of the files on the cadrl_ros github
-        # EPISODE_NUMBER_TO_LOAD        = 1653000 # this is one of the files on the cadrl_ros github
-        # EPISODE_NUMBER_TO_LOAD        = 2830001
-        # EPISODE_NUMBER_TO_LOAD        = 1900000 # 2018-IROS GA3C-10
-        # EPISODE_NUMBER_TO_LOAD        = 1491000 # 2018-IROS GA3C-4 (only trained on 2-4 agents... does not exist?)
-        # EPISODE_NUMBER_TO_LOAD        = 1239000 # trained from regression w/ 2-4 agents (took 12hrs)
-        # EPISODE_NUMBER_TO_LOAD        = 1972000 # retrained on 6-28-19 w/ 10 agents (starting from 1239000, took 18hrs for last step)
-        # EPISODE_NUMBER_TO_LOAD        = 1490000
-        self.EPISODE_NUMBER_TO_LOAD        = 0
-
-
         self.LOAD_RL_THEN_TRAIN_RL, self.TRAIN_ONLY_REGRESSION, self.LOAD_REGRESSION_THEN_TRAIN_RL = range(3)
-        self.TRAIN_VERSION = self.TRAIN_ONLY_REGRESSION
-        # self.LOAD_RL_THEN_TRAIN_RL     = False
-        # self.LOAD_NOTHING_THEN_TRAIN_REGRESSION_THEN_RL = False # Start from scratch, then train regression phase before RL
-        # self.LOAD_REGRESSION_THEN_TRAIN_RL = False # Initialize training with regression network
-        # self.TRAIN_ONLY_REGRESSION = True # Initialize training with regression network
 
         ### NETWORK
         self.NET_ARCH            = 'NetworkVP_rnn' # Neural net architecture
@@ -97,14 +86,10 @@ class TrainPhase1(EnvConfig):
         self.USE_DROPOUT         = False
         self.USE_REGULARIZATION  = True
 
-        # self.MULTI_AGENT_ARCH = 'RNN'
-        self.MULTI_AGENT_ARCH = 'WEIGHT_SHARING'
-        # self.MULTI_AGENT_ARCH = 'FC'
-
         #########################################################################
         # NUMBER OF AGENTS, PREDICTORS, TRAINERS, AND OTHER SYSTEM SETTINGS
         # IF THE DYNAMIC CONFIG IS ON, THESE ARE THE INITIAL VALUES
-        self.AGENTS                        = 1 # Number of Agents
+        self.AGENTS                        = 32 # Number of Agents
         self.PREDICTORS                    = 2 # Number of Predictors
         self.TRAINERS                      = 2 # Number of Trainers
         self.DEVICE                        = '/cpu:0' # Device
@@ -140,36 +125,48 @@ class TrainPhase1(EnvConfig):
         self.TENSORBOARD                  = True # Enable TensorBoard
         self.TENSORBOARD_UPDATE_FREQUENCY = 100 # Update TensorBoard every X training steps
         self.SAVE_MODELS                  = True # Enable to save models every SAVE_FREQUENCY episodes
-        self.SAVE_FREQUENCY               = 10000 # Save every SAVE_FREQUENCY episodes
+        self.SAVE_FREQUENCY               = 50000 # Save every SAVE_FREQUENCY episodes
         self.PRINT_STATS_FREQUENCY        = 1 # Print stats every PRINT_STATS_FREQUENCY episodes
         self.STAT_ROLLING_MEAN_WINDOW     = 1000 # The window to average stats
         self.RESULTS_FILENAME             = 'results.txt'# Results filename
         self.NETWORK_NAME                 = 'network'# Network checkpoint name
 
+class TrainPhase1(Train):
+    def __init__(self):
+        self.MAX_NUM_AGENTS_IN_ENVIRONMENT = 4
+        self.MAX_NUM_AGENTS_TO_SIM = 4
+        Train.__init__(self)
+        self.TRAIN_VERSION = self.LOAD_REGRESSION_THEN_TRAIN_RL
+        if self.MULTI_AGENT_ARCH == 'RNN':
+            self.LOAD_FROM_WANDB_RUN_ID = 'run-rnn'
+        elif self.MULTI_AGENT_ARCH == 'WEIGHT_SHARING':
+            self.LOAD_FROM_WANDB_RUN_ID = 'run-ws'
+        self.EPISODE_NUMBER_TO_LOAD = 0
+
         self.EPISODES                = 1500000 # Total number of episodes and annealing frequency
         self.ANNEALING_EPISODE_COUNT = 1500000
 
-class TrainPhase2(TrainPhase1):
+class TrainPhase2(Train):
     def __init__(self):
         self.MAX_NUM_AGENTS_IN_ENVIRONMENT = 10
         self.MAX_NUM_AGENTS_TO_SIM = 10
-        TrainPhase1.__init__(self)
+        Train.__init__(self)
         self.EPISODES                = 2000000
         self.ANNEALING_EPISODE_COUNT = 2000000
-        self.LOAD_FROM_WANDB_RUN_ID = 'run-20200324_221727-2tz70xqi'
-        self.LOAD_RL_THEN_TRAIN_RL     = True
-        self.LOAD_REGRESSION_THEN_TRAIN_RL = False
-        self.EPISODE_NUMBER_TO_LOAD        = 1490000
+        self.TRAIN_VERSION = self.LOAD_RL_THEN_TRAIN_RL
+        self.LOAD_FROM_WANDB_RUN_ID = 'run-20200401_205620-2dfp6yeg'
+        self.EPISODE_NUMBER_TO_LOAD        = 1450000
+        # self.LOAD_FROM_WANDB_RUN_ID = 'run-20200324_221727-2tz70xqi'
+        # self.EPISODE_NUMBER_TO_LOAD        = 1490000
 
-class TrainRegression(TrainPhase1):
+class TrainRegression(Train):
     def __init__(self):
         self.MAX_NUM_AGENTS_IN_ENVIRONMENT = 4
-        TrainPhase1.__init__(self)
+        Train.__init__(self)
+        self.TRAIN_VERSION = self.TRAIN_ONLY_REGRESSION
         self.REGRESSION_BATCH_SIZE = 2000
         self.REGRESSION_NUM_TRAINING_STEPS = 3000
         self.REGRESSION_PLOT_STEP = 100
-
         self.LEARNING_RATE_REGRESSION_START = 4e-5 # Learning rate
         self.LEARNING_RATE_REGRESSION_END = 4e-5 # Learning rate
-
 

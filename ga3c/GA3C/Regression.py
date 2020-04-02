@@ -12,6 +12,7 @@ class Regression():
         self.actions = actions
         self.num_actions = actions.num_actions
 
+        np.random.seed(0)
         np.set_printoptions(suppress=True,precision=4)
 
     def train_model(self):
@@ -24,10 +25,11 @@ class Regression():
     def load_ped_data(self):
         num_agents = 4
 
-        if Config.MULTI_AGENT_ARCH == 'RNN':
-            prepend = 'rnn_'
-        else:
-            prepend = ''
+        prepend = 'rnn_'
+        # if Config.MULTI_AGENT_ARCH == 'RNN':
+        #     prepend = 'rnn_'
+        # else:
+        #     prepend = ''
 
         file_name = self.file_dir+\
             "/2_3_4_agents_{prepend}cadrl_dataset_action_value_{mode}.p"
@@ -117,14 +119,26 @@ class Regression():
                 print("Regression Training Step %d/%d" %(kk, total_steps))
                 rand_ind = np.random.randint(0,nb_training_examples)
                 rand_x = np.expand_dims(input_x[rand_ind,:], axis=0); rand_a = output_action_one_hot[rand_ind,:]; rand_y = output_y[rand_ind];
-                print(rand_x)
                 network_p, network_v = self.model.predict_p_and_v(rand_x)
                 # util.plot_snapshot(rand_x, rand_a, rand_y, self.actions.actions, network_p, network_v, figure_name="regression_snapshot")
                 
+                minibatch_indices = np.random.choice(nb_training_examples, min(nb_training_examples, batch_size), replace=False)
+                x = input_x[minibatch_indices]; a = output_action_one_hot[minibatch_indices]; y = np.squeeze(output_y[minibatch_indices])
+                v_loss_train, p_loss_train, loss_train = self.model.get_regression_loss(x, y, a)
+                print("[Regression] Loss on train set:", v_loss_train, p_loss_train, loss_train)
                 minibatch_indices = np.random.choice(nb_testing_examples, min(nb_testing_examples, batch_size), replace=False)
                 x = input_x_test[minibatch_indices]; a = output_action_test_one_hot[minibatch_indices]; y = np.squeeze(output_y_test[minibatch_indices])
-                v_loss, p_loss, loss = self.model.get_regression_loss(x, y, a)
-                print("[Regression] Loss on test set:", v_loss, p_loss, loss)
+                v_loss_test, p_loss_test, loss_test = self.model.get_regression_loss(x, y, a)
+                print("[Regression] Loss on test set:", v_loss_test, p_loss_test, loss_test)
+
+                self.model.wandb_log({
+                    'v_loss_train': v_loss_train, 
+                    'p_loss_train': p_loss_train, 
+                    'loss_train': loss_train, 
+                    'v_loss_test': v_loss_test, 
+                    'p_loss_test': p_loss_test, 
+                    'loss_test': loss_test, 
+                    })
 
             minibatch_indices = np.random.choice(nb_training_examples, min(nb_training_examples, batch_size), replace=False)
             x = input_x[minibatch_indices]; a = output_action_one_hot[minibatch_indices]; y = np.squeeze(output_y[minibatch_indices])
