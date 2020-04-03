@@ -40,7 +40,7 @@ class Train(EnvConfig):
         self.STATES_NOT_USED_IN_POLICY = ['is_learning']
 
         self.MULTI_AGENT_ARCH_RNN, self.MULTI_AGENT_ARCH_WEIGHT_SHARING = range(2)
-        self.MULTI_AGENT_ARCH = self.MULTI_AGENT_ARCH_WEIGHT_SHARING
+        self.MULTI_AGENT_ARCH = self.MULTI_AGENT_ARCH_RNN
 
         if self.MULTI_AGENT_ARCH == self.MULTI_AGENT_ARCH_WEIGHT_SHARING:
             self.MAX_NUM_OTHER_AGENTS_OBSERVED = 3
@@ -53,7 +53,7 @@ class Train(EnvConfig):
         ### GENERAL PARAMETERS
         self.game_grid, self.game_ale, self.game_collision_avoidance = range(3) # Initialize game types as enum
         self.GAME_CHOICE         = self.game_collision_avoidance # Game choice: Either "game_grid" or "game_ale" or "game_collision_avoidance"
-        self.USE_WANDB = True
+        self.USE_WANDB = False
         self.WANDB_PROJECT_NAME = "ga3c_cadrl"
         self.DEBUG               = False # Enable debug (prints more information for debugging purpose)
         self.RANDOM_SEED_1000 = 0 # np.random.seed(this * 1000 + env_id)
@@ -157,10 +157,10 @@ class TrainPhase2(Train):
         self.EPISODES                = 2000000
         self.ANNEALING_EPISODE_COUNT = 2000000
         self.TRAIN_VERSION = self.LOAD_RL_THEN_TRAIN_RL
-        self.LOAD_FROM_WANDB_RUN_ID = 'run-20200401_205620-2dfp6yeg'
-        self.EPISODE_NUMBER_TO_LOAD        = 1450000
-        # self.LOAD_FROM_WANDB_RUN_ID = 'run-20200324_221727-2tz70xqi'
-        # self.EPISODE_NUMBER_TO_LOAD        = 1490000
+        # self.LOAD_FROM_WANDB_RUN_ID = 'run-20200401_205620-2dfp6yeg'
+        # self.EPISODE_NUMBER_TO_LOAD        = 1450000
+        self.LOAD_FROM_WANDB_RUN_ID = 'run-20200324_221727-2tz70xqi'
+        self.EPISODE_NUMBER_TO_LOAD        = 1490000
         self.SPECIAL_EPISODES_TO_SAVE = [1990000, 2000000]
 
 class TrainRegression(Train):
