@@ -58,7 +58,6 @@ class NetworkVPCore(object):
 
     
     def _create_graph_inputs(self):
-        if Config.GAME_CHOICE == Config.game_collision_avoidance:
             self.x = tf.compat.v1.placeholder(
                 tf.float32, [None, Config.NN_INPUT_SIZE], name='X')
  

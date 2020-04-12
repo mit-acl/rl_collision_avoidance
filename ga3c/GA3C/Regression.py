@@ -7,7 +7,7 @@ import os
 class Regression():
     def __init__(self, model, num_agents, actions):
         self.model = model
-        self.file_dir = os.path.dirname(os.path.realpath(__file__))+'/datasets'
+        self.file_dir = os.path.dirname(os.path.realpath(__file__))+'/../../gym-collision-avoidance/gym_collision_avoidance/datasets/regression'
         self.num_agents = num_agents
         self.actions = actions
         self.num_actions = actions.num_actions
@@ -23,19 +23,20 @@ class Regression():
             return pickle.load(f,encoding='latin1')
 
     def load_ped_data(self):
-        num_agents = 4
+        num_agents = Config.MAX_NUM_AGENTS_IN_ENVIRONMENT
 
-        prepend = 'rnn_'
+        # prepend = 'rnn_'
+        prepend = Config.DATASET_NAME
         # if Config.MULTI_AGENT_ARCH == 'RNN':
         #     prepend = 'rnn_'
         # else:
         #     prepend = ''
 
         file_name = self.file_dir+\
-            "/2_3_4_agents_{prepend}cadrl_dataset_action_value_{mode}.p"
+            "/{num_agents}_agents_{prepend}cadrl_dataset_action_value_{mode}.p"
 
-        dataset_ped_train = self.pickle_load(file_name.format(prepend=prepend, mode="train"))
-        dataset_ped_test = self.pickle_load(file_name.format(prepend=prepend, mode="test"))
+        dataset_ped_train = self.pickle_load(file_name.format(prepend=prepend, mode="train", num_agents=num_agents))
+        dataset_ped_test = self.pickle_load(file_name.format(prepend=prepend, mode="test", num_agents=num_agents))
         num_train_pts = dataset_ped_train[0].shape[0]
         num_test_pts = dataset_ped_test[0].shape[0]
         print('dataset contains %d pts, training set has %d pts, test set has %d pts' % \
@@ -131,14 +132,15 @@ class Regression():
                 v_loss_test, p_loss_test, loss_test = self.model.get_regression_loss(x, y, a)
                 print("[Regression] Loss on test set:", v_loss_test, p_loss_test, loss_test)
 
-                self.model.wandb_log({
-                    'v_loss_train': v_loss_train, 
-                    'p_loss_train': p_loss_train, 
-                    'loss_train': loss_train, 
-                    'v_loss_test': v_loss_test, 
-                    'p_loss_test': p_loss_test, 
-                    'loss_test': loss_test, 
-                    })
+                if hasattr(self.model, "wandb_log"):
+                    self.model.wandb_log({
+                        'v_loss_train': v_loss_train, 
+                        'p_loss_train': p_loss_train, 
+                        'loss_train': loss_train, 
+                        'v_loss_test': v_loss_test, 
+                        'p_loss_test': p_loss_test, 
+                        'loss_test': loss_test, 
+                        })
 
             minibatch_indices = np.random.choice(nb_training_examples, min(nb_training_examples, batch_size), replace=False)
             x = input_x[minibatch_indices]; a = output_action_one_hot[minibatch_indices]; y = np.squeeze(output_y[minibatch_indices])

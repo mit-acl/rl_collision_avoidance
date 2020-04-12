@@ -48,6 +48,6 @@ $DIR/gym-collision-avoidance/install.sh false false
 python -m pip install -r requirements.txt
 python -m pip install -e ga3c
 
-# export PYTHONPATH=/home/mfe/code/carrl/venv/lib/python3.5/site-packages
+# export PYTHONPATH=/home/mfe/code/rl_collision_avoidance/venv/lib/python3.5/site-packages
 
 echo "GA3C-CADRL was sucessfully installed."
