@@ -1,0 +1,367 @@
+wandb_version: 1
+
+ACTION_SPACE_TYPE:
+  desc: null
+  value: 0
+AGENTS:
+  desc: null
+  value: 32
+AGENT_SORTING_METHOD:
+  desc: null
+  value: closest_first
+ALL_ARCHS:
+  desc: null
+  value:
+  - NetworkVP_rnn
+ANIMATE_EPISODES:
+  desc: null
+  value: false
+ANIMATION_PERIOD_STEPS:
+  desc: null
+  value: 5
+BETA_END:
+  desc: null
+  value: 0.0001
+BETA_START:
+  desc: null
+  value: 0.0001
+COLLISION_AVOIDANCE:
+  desc: null
+  value: true
+COLLISION_DIST:
+  desc: null
+  value: 0.0
+DATASET_NAME:
+  desc: null
+  value: _
+DEBUG:
+  desc: null
+  value: false
+DEVICE:
+  desc: null
+  value: /cpu:0
+DISCOUNT:
+  desc: null
+  value: 0.97
+DT:
+  desc: null
+  value: 0.2
+DYNAMIC_SETTINGS:
+  desc: null
+  value: false
+DYNAMIC_SETTINGS_INITIAL_WAIT:
+  desc: null
+  value: 10
+DYNAMIC_SETTINGS_STEP_WAIT:
+  desc: null
+  value: 20
+EVALUATE_MODE:
+  desc: null
+  value: false
+FIRST_STATE_INDEX:
+  desc: null
+  value: 1
+GAME_CHOICE:
+  desc: null
+  value: 2
+GETTING_CLOSE_RANGE:
+  desc: null
+  value: 0.2
+GRAD_CLIP_NORM:
+  desc: null
+  value: 40.0
+HOST_AGENT_OBSERVATION_LENGTH:
+  desc: null
+  value: 4
+HOST_AGENT_STATE_SIZE:
+  desc: null
+  value: 4
+LASERSCAN_LENGTH:
+  desc: null
+  value: 512
+LASERSCAN_NUM_PAST:
+  desc: null
+  value: 3
+LEARNING_RATE_REGRESSION_END:
+  desc: null
+  value: 4.0e-05
+LEARNING_RATE_REGRESSION_START:
+  desc: null
+  value: 4.0e-05
+LEARNING_RATE_RL_END:
+  desc: null
+  value: 2.0e-05
+LEARNING_RATE_RL_START:
+  desc: null
+  value: 2.0e-05
+LOAD_REGRESSION_THEN_TRAIN_RL:
+  desc: null
+  value: 2
+LOAD_RL_THEN_TRAIN_RL:
+  desc: null
+  value: 0
+LOG_EPSILON:
+  desc: null
+  value: 1.0e-06
+MAX_NUM_AGENTS_IN_ENVIRONMENT:
+  desc: null
+  value: 4
+MAX_NUM_AGENTS_TO_SIM:
+  desc: null
+  value: 4
+MAX_NUM_OTHER_AGENTS_IN_ENVIRONMENT:
+  desc: null
+  value: 3
+MAX_NUM_OTHER_AGENTS_OBSERVED:
+  desc: null
+  value: 7
+MAX_QUEUE_SIZE:
+  desc: null
+  value: 100
+MAX_TIME_RATIO:
+  desc: null
+  value: 2.0
+MIN_POLICY:
+  desc: null
+  value: 0.0
+MULTI_AGENT_ARCH:
+  desc: null
+  value: 1
+MULTI_AGENT_ARCH_LASERSCAN:
+  desc: null
+  value: 2
+MULTI_AGENT_ARCH_RNN:
+  desc: null
+  value: 0
+MULTI_AGENT_ARCH_WEIGHT_SHARING:
+  desc: null
+  value: 1
+NEAR_GOAL_THRESHOLD:
+  desc: null
+  value: 0.2
+NETWORK_NAME:
+  desc: null
+  value: network
+NET_ARCH:
+  desc: null
+  value: NetworkVP_rnn
+NORMALIZE_INPUT:
+  desc: null
+  value: true
+NUM_ACTIONS:
+  desc: null
+  value: 11
+NUM_PAST_ACTIONS_IN_STATE:
+  desc: null
+  value: 0
+NUM_STEPS_IN_OBS_HISTORY:
+  desc: null
+  value: 1
+OPTIMIZER:
+  desc: null
+  value: 1
+OPT_ADAM:
+  desc: null
+  value: 1
+OPT_RMSPROP:
+  desc: null
+  value: 0
+OTHER_AGENT_FULL_OBSERVATION_LENGTH:
+  desc: null
+  value: 7
+OTHER_AGENT_OBSERVATION_LENGTH:
+  desc: null
+  value: 7
+PLAY_MODE:
+  desc: null
+  value: false
+PLOT_CIRCLES_ALONG_TRAJ:
+  desc: null
+  value: true
+PLOT_EVERY_N_EPISODES:
+  desc: null
+  value: 100
+PLT_FIG_SIZE:
+  desc: null
+  value:
+  - 10
+  - 8
+PREDICTION_BATCH_SIZE:
+  desc: null
+  value: 128
+PREDICTORS:
+  desc: null
+  value: 2
+PRINT_STATS_FREQUENCY:
+  desc: null
+  value: 1
+RANDOM_SEED_1000:
+  desc: null
+  value: 0
+REGRESSION_BATCH_SIZE:
+  desc: null
+  value: 2000
+REGRESSION_NUM_TRAINING_STEPS:
+  desc: null
+  value: 3000
+REGRESSION_PLOT_STEP:
+  desc: null
+  value: 100
+RESULTS_FILENAME:
+  desc: null
+  value: results.txt
+REWARD_AT_GOAL:
+  desc: null
+  value: 1.0
+REWARD_COLLISION_WITH_AGENT:
+  desc: null
+  value: -0.25
+REWARD_COLLISION_WITH_WALL:
+  desc: null
+  value: -0.25
+REWARD_ENTERED_NORM_ZONE:
+  desc: null
+  value: -0.05
+REWARD_GETTING_CLOSE:
+  desc: null
+  value: -0.1
+REWARD_TIME_STEP:
+  desc: null
+  value: 0.0
+REWARD_WIGGLY_BEHAVIOR:
+  desc: null
+  value: 0.0
+RMSPROP_DECAY:
+  desc: null
+  value: 0.99
+RMSPROP_EPSILON:
+  desc: null
+  value: 0.1
+RMSPROP_MOMENTUM:
+  desc: null
+  value: 0.0
+RVO_ANTI_COLLAB_T:
+  desc: null
+  value: 1.0
+RVO_COLLAB_COEFF:
+  desc: null
+  value: 0.5
+RVO_TIME_HORIZON:
+  desc: null
+  value: 5.0
+SAVE_EPISODE_PLOTS:
+  desc: null
+  value: false
+SAVE_FREQUENCY:
+  desc: null
+  value: 50000
+SAVE_MODELS:
+  desc: null
+  value: true
+SENSING_HORIZON:
+  desc: null
+  value: .inf
+SHOW_EPISODE_PLOTS:
+  desc: null
+  value: false
+SOCIAL_NORMS:
+  desc: null
+  value: none
+SPECIAL_EPISODES_TO_SAVE:
+  desc: null
+  value: []
+STATES_IN_OBS:
+  desc: null
+  value:
+  - is_learning
+  - num_other_agents
+  - dist_to_goal
+  - heading_ego_frame
+  - pref_speed
+  - radius
+  - other_agents_states
+STATES_NOT_USED_IN_POLICY:
+  desc: null
+  value:
+  - is_learning
+STAT_ROLLING_MEAN_WINDOW:
+  desc: null
+  value: 1000
+TENSORBOARD:
+  desc: null
+  value: true
+TENSORBOARD_UPDATE_FREQUENCY:
+  desc: null
+  value: 100
+TEST_CASE_FN:
+  desc: null
+  value: get_testcase_random
+TIME_MAX:
+  desc: null
+  value: 20
+TRAINERS:
+  desc: null
+  value: 2
+TRAINING_MIN_BATCH_SIZE:
+  desc: null
+  value: 100
+TRAIN_MODE:
+  desc: null
+  value: true
+TRAIN_ONLY_REGRESSION:
+  desc: null
+  value: 1
+TRAIN_SINGLE_AGENT:
+  desc: null
+  value: false
+TRAIN_VERSION:
+  desc: null
+  value: 1
+USE_DROPOUT:
+  desc: null
+  value: false
+USE_GRAD_CLIP:
+  desc: null
+  value: false
+USE_IMAGE:
+  desc: null
+  value: false
+USE_REGULARIZATION:
+  desc: null
+  value: true
+USE_STATIC_MAP:
+  desc: null
+  value: false
+USE_WANDB:
+  desc: null
+  value: true
+WANDB_PROJECT_NAME:
+  desc: null
+  value: ga3c_cadrl
+WIGGLY_BEHAVIOR_THRESHOLD:
+  desc: null
+  value: .inf
+_wandb:
+  desc: null
+  value:
+    cli_version: 0.8.30
+    code_path: code/ga3c/GA3C/Run.py
+    framework: tensorflow
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    python_version: 3.5.2
+continuous:
+  desc: null
+  value: 0
+discrete:
+  desc: null
+  value: 1
+game_ale:
+  desc: null
+  value: 1
+game_collision_avoidance:
+  desc: null
+  value: 2
+game_grid:
+  desc: null
+  value: 0

@@ -19,6 +19,12 @@ regression/wandb/*
 regression/wandb/run-rnn/checkpoints/*
 !regression/wandb/run-ws
 regression/wandb/run-ws/checkpoints/*
+!regression/wandb/run-ws-4
+regression/wandb/run-ws-4/checkpoints/*
+!regression/wandb/run-ws-6
+regression/wandb/run-ws-6/checkpoints/*
+!regression/wandb/run-ws-8
+regression/wandb/run-ws-8/checkpoints/*
 
 # If you want to add a run into git, just add two lines like this:
 # !RL/wandb/run-20200325_204353-3crb139r
