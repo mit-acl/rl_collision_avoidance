@@ -1,2 +1,2 @@
-model_checkpoint_path: "/mnt/ubuntu_extra_ssd3/code/rl_collision_avoidance/ga3c/GA3C/checkpoints/regression/wandb/run-ws-6/checkpoints/network_00000000"
-all_model_checkpoint_paths: "/mnt/ubuntu_extra_ssd3/code/rl_collision_avoidance/ga3c/GA3C/checkpoints/regression/wandb/run-ws-6/checkpoints/network_00000000"
+model_checkpoint_path: "network_00000000"
+all_model_checkpoint_paths: "network_00000000"
