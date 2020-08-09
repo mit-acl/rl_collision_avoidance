@@ -41,7 +41,7 @@ class Train(EnvConfig):
         self.STATES_NOT_USED_IN_POLICY = ['is_learning']
 
         self.MULTI_AGENT_ARCH_RNN, self.MULTI_AGENT_ARCH_WEIGHT_SHARING, self.MULTI_AGENT_ARCH_LASERSCAN = range(3)
-        self.MULTI_AGENT_ARCH = self.MULTI_AGENT_ARCH_WEIGHT_SHARING
+        self.MULTI_AGENT_ARCH = self.MULTI_AGENT_ARCH_RNN
 
         if self.MULTI_AGENT_ARCH == self.MULTI_AGENT_ARCH_WEIGHT_SHARING:
             self.MAX_NUM_OTHER_AGENTS_OBSERVED = 7
@@ -54,7 +54,7 @@ class Train(EnvConfig):
         ### GENERAL PARAMETERS
         self.game_grid, self.game_ale, self.game_collision_avoidance = range(3) # Initialize game types as enum
         self.GAME_CHOICE         = self.game_collision_avoidance # Game choice: Either "game_grid" or "game_ale" or "game_collision_avoidance"
-        self.USE_WANDB = True
+        self.USE_WANDB = False
         self.WANDB_PROJECT_NAME = "ga3c_cadrl"
         self.DEBUG               = False # Enable debug (prints more information for debugging purpose)
         self.RANDOM_SEED_1000 = 0 # np.random.seed(this * 1000 + env_id)
