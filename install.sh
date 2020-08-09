@@ -10,10 +10,20 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 if $MAKE_VENV; then
     # Virtualenv w/ python3
     export PYTHONPATH=/usr/bin/python3 # point to your python3
-    python3 -m pip install zipp==1.2.0 # virtualenv for python3.5
-    python3 -m pip install virtualenv
+
+    # Check that it's actually python 3.4-7
+    PYTHONVERSION=`python --version`
+    if [[ ${PYTHONVERSION:7:1} == "3" && (${PYTHONVERSION:9:1} == "4" || ${PYTHONVERSION:9:1} == "5" || ${PYTHONVERSION:9:1} == "6" || ${PYTHONVERSION:9:1} == "7") ]]; then
+        echo "You have Python 3.[4-7] installed (${PYTHONVERSION}). Cool."
+    else
+        echo "Your python version is: ${PYTHONVERSION}. Please replace it with Python 3.4-3.7 so we can use tensorflow 1."
+        exit 1
+    fi
+
+    python -m pip install zipp==1.2.0 # virtualenv for python3.5
+    python -m pip install virtualenv
     cd $DIR
-    virtualenv -p python3 venv
+    python -m virtualenv venv
 fi
 
 if $SOURCE_VENV; then
