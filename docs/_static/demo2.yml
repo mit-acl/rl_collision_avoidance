@@ -1,0 +1,269 @@
+# The configurations that used for the recording, feel free to edit them
+config:
+
+  # Specify a command to be executed
+  # like `/bin/bash -l`, `ls`, or any other commands
+  # the default is bash for Linux
+  # or powershell.exe for Windows
+  command: bash -l
+  
+  # Specify the current working directory path
+  # the default is the current working directory path
+  cwd: /Users/mfe/code/rl_collision_avoidance
+  
+  # Export additional ENV variables
+  env:
+    recording: true
+  
+  # Explicitly set the number of columns
+  # or use `auto` to take the current
+  # number of columns of your shell
+  cols: 100
+  
+  # Explicitly set the number of rows
+  # or use `auto` to take the current
+  # number of rows of your shell
+  rows: 36
+  
+  # Amount of times to repeat GIF
+  # If value is -1, play once
+  # If value is 0, loop indefinitely
+  # If value is a positive number, loop n times
+  repeat: 0
+  
+  # Quality
+  # 1 - 100
+  quality: 100
+  
+  # Delay between frames in ms
+  # If the value is `auto` use the actual recording delays
+  frameDelay: auto
+  
+  # Maximum delay between frames in ms
+  # Ignored if the `frameDelay` isn't set to `auto`
+  # Set to `auto` to prevent limiting the max idle time
+  maxIdleTime: 2000
+  
+  # The surrounding frame box
+  # The `type` can be null, window, floating, or solid`
+  # To hide the title use the value null
+  # Don't forget to add a backgroundColor style with a null as type
+  frameBox:
+    type: floating
+    title: Terminalizer
+    style:
+      border: 0px black solid
+      # boxShadow: none
+      # margin: 0px
+  
+  # Add a watermark image to the rendered gif
+  # You need to specify an absolute path for
+  # the image on your machine or a URL, and you can also
+  # add your own CSS styles
+  watermark:
+    imagePath: null
+    style:
+      position: absolute
+      right: 15px
+      bottom: 15px
+      width: 100px
+      opacity: 0.9
+  
+  # Cursor style can be one of
+  # `block`, `underline`, or `bar`
+  cursorStyle: block
+  
+  # Font family
+  # You can use any font that is installed on your machine
+  # in CSS-like syntax
+  fontFamily: "Monaco, Lucida Console, Ubuntu Mono, Monospace"
+  
+  # The size of the font
+  fontSize: 12
+  
+  # The height of lines
+  lineHeight: 1
+  
+  # The spacing between letters
+  letterSpacing: 0
+  
+  # Theme
+  theme:
+    background: "transparent"
+    foreground: "#afafaf"
+    cursor: "#c7c7c7"
+    black: "#232628"
+    red: "#fc4384"
+    green: "#b3e33b"
+    yellow: "#ffa727"
+    blue: "#75dff2"
+    magenta: "#ae89fe"
+    cyan: "#708387"
+    white: "#d5d5d0"
+    brightBlack: "#626566"
+    brightRed: "#ff7fac"
+    brightGreen: "#c8ed71"
+    brightYellow: "#ebdf86"
+    brightBlue: "#75dff2"
+    brightMagenta: "#ae89fe"
+    brightCyan: "#b1c6ca"
+    brightWhite: "#f9f9f4"
+  
+# Records, feel free to edit them
+records:
+  - delay: 401
+    content: "Michaels-MacBook-Air:rl_collision_avoidance mfe$ "
+  - delay: 1358
+    content: .
+  - delay: 198
+    content: /
+  - delay: 255
+    content: t
+  - delay: 174
+    content: r
+  - delay: 87
+    content: a
+  - delay: 211
+    content: 'in.sh '
+  - delay: 774
+    content: T
+  - delay: 208
+    content: r
+  - delay: 51
+    content: a
+  - delay: 138
+    content: i
+  - delay: 80
+    content: 'n'
+  - delay: 468
+    content: P
+  - delay: 167
+    content: h
+  - delay: 102
+    content: a
+  - delay: 91
+    content: s
+  - delay: 77
+    content: e
+  - delay: 322
+    content: '1'
+  - delay: 311
+    content: "\r\n"
+  - delay: 23
+    content: "Entered virtualenv.\r\n"
+  - delay: 5
+    content: "---------------------------------------------------------------------------------------------------------------------------------------------------------\r\nRunning GA3C-CADRL gym-collision-avoidance training script (TrainPhase1)\r\n---------------------------------------------------------------------------------------------------------------------------------------------------------\r\n"
+  - delay: 2011
+    content: "[Server] Making model...\r\n"
+  - delay: 1838
+    content: "[Server] Loading Regression Model then training RL.\r\n[NetworkVPCore] Loading checkpoint file: /Users/mfe/code/rl_collision_avoidance/ga3c/GA3C/checkpoints/regression/wandb/run-rnn/checkpoints/network_00000000\r\n"
+  - delay: 5955
+    content: "[Time:        5] [Episode:        1 Score:    -0.3135] [RScore:    -0.3135 RPPS:     2] [PPS:     3 TPS:     0] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 59
+    content: "[Time:        5] [Episode:        2 Score:    -0.3201] [RScore:    -0.3168 RPPS:     4] [PPS:     5 TPS:     0] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 15
+    content: "[Time:        5] [Episode:        3 Score:    -0.2500] [RScore:    -0.2945 RPPS:     6] [PPS:     7 TPS:     0] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 70
+    content: "[Time:        6] [Episode:        4 Score:    -0.3349] [RScore:    -0.3046 RPPS:     9] [PPS:    10 TPS:     0] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 28
+    content: "[Time:        6] [Episode:        5 Score:    -0.3294] [RScore:    -0.3096 RPPS:    13] [PPS:    14 TPS:     0] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 8
+    content: "[Time:        6] [Episode:        6 Score:     0.0000] [RScore:    -0.2580 RPPS:    17] [PPS:    18 TPS:     0] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 512
+    content: "[Time:        6] [Episode:        7 Score:    -0.3131] [RScore:    -0.2659 RPPS:    20] [PPS:    21 TPS:     1] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 43
+    content: "[Time:        6] [Episode:        8 Score:    -0.2500] [RScore:    -0.2639 RPPS:    23] [PPS:    24 TPS:     1] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 40
+    content: "[Time:        6] [Episode:        9 Score:    -0.3517] [RScore:    -0.2736 RPPS:    30] [PPS:    31 TPS:     1] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 83
+    content: "[Time:        6] [Episode:       10 Score:     0.1295] [RScore:    -0.2333 RPPS:    40] [PPS:    41 TPS:     1] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 83
+    content: "[Time:        6] [Episode:       11 Score:    -0.2758] [RScore:    -0.2372 RPPS:    49] [PPS:    50 TPS:     2] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 9
+    content: "[Time:        6] [Episode:       12 Score:     0.5000] [RScore:    -0.1757 RPPS:    57] [PPS:    58 TPS:     2] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 112
+    content: "[Time:        6] [Episode:       13 Score:     0.3750] [RScore:    -0.1334 RPPS:    67] [PPS:    68 TPS:     2] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 29
+    content: "[Time:        6] [Episode:       14 Score:     0.0092] [RScore:    -0.1232 RPPS:    77] [PPS:    78 TPS:     2] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 52
+    content: "[Time:        7] [Episode:       15 Score:     0.1667] [RScore:    -0.1039 RPPS:    86] [PPS:    87 TPS:     2] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 31
+    content: "[Time:        7] [Episode:       16 Score:    -0.3309] [RScore:    -0.1181 RPPS:    87] [PPS:    88 TPS:     2] [NT:  2 NP:  2 NA: 32]\r\n[Time:        7] [Episode:       17 Score:     0.7691] [RScore:    -0.0659 RPPS:   100] [PPS:   101 TPS:     2] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 10
+    content: "[Time:        7] [Episode:       18 Score:    -0.3115] [RScore:    -0.0795 RPPS:   110] [PPS:   111 TPS:     3] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 52
+    content: "[Time:        7] [Episode:       19 Score:     0.2880] [RScore:    -0.0602 RPPS:   119] [PPS:   120 TPS:     3] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 13
+    content: "[Time:        7] [Episode:       20 Score:    -0.1667] [RScore:    -0.0655 RPPS:   138] [PPS:   139 TPS:     3] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 39
+    content: "[Time:        7] [Episode:       21 Score:    -0.3377] [RScore:    -0.0785 RPPS:   156] [PPS:   157 TPS:     3] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 48
+    content: "[Time:        7] [Episode:       22 Score:    -0.2877] [RScore:    -0.0880 RPPS:   165] [PPS:   166 TPS:     3] [NT:  2 NP:  2 NA: 32]\r\n[Time:        7] [Episode:       23 Score:    -0.2500] [RScore:    -0.0950 RPPS:   169] [PPS:   170 TPS:     3] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 13
+    content: "[Time:        7] [Episode:       24 Score:    -0.2782] [RScore:    -0.1027 RPPS:   186] [PPS:   187 TPS:     3] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 7
+    content: "[Time:        7] [Episode:       25 Score:    -0.2500] [RScore:    -0.1085 RPPS:   202] [PPS:   203 TPS:     3] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 34
+    content: "[Time:        7] [Episode:       26 Score:     0.2116] [RScore:    -0.0962 RPPS:   215] [PPS:   216 TPS:     3] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 11
+    content: "[Time:        7] [Episode:       27 Score:     0.0100] [RScore:    -0.0923 RPPS:   232] [PPS:   233 TPS:     3] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 30
+    content: "[Time:        7] [Episode:       28 Score:    -0.2500] [RScore:    -0.0979 RPPS:   234] [PPS:   235 TPS:     4] [NT:  2 NP:  2 NA: 32]\r\n[Time:        7] [Episode:       29 Score:    -0.3482] [RScore:    -0.1066 RPPS:   238] [PPS:   239 TPS:     4] [NT:  2 NP:  2 NA: 32]\r\n[Time:        7] [Episode:       30 Score:    -0.2500] [RScore:    -0.1113 RPPS:   239] [PPS:   240 TPS:     4] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 7
+    content: "[Time:        7] [Episode:       31 Score:    -0.3124] [RScore:    -0.1178 RPPS:   243] [PPS:   244 TPS:     4] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 42
+    content: "[Time:        7] [Episode:       32 Score:     0.3188] [RScore:    -0.1042 RPPS:   254] [PPS:   255 TPS:     4] [NT:  2 NP:  2 NA: 32]\r\n[Time:        7] [Episode:       33 Score:     1.0000] [RScore:    -0.0707 RPPS:   267] [PPS:   268 TPS:     4] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 33
+    content: "[Time:        7] [Episode:       34 Score:    -0.2500] [RScore:    -0.0760 RPPS:   268] [PPS:   269 TPS:     4] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 66
+    content: "[Time:        7] [Episode:       35 Score:     1.0000] [RScore:    -0.0453 RPPS:   283] [PPS:   284 TPS:     4] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 5
+    content: "[Time:        7] [Episode:       36 Score:    -0.3470] [RScore:    -0.0536 RPPS:   286] [PPS:   287 TPS:     4] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 14
+    content: "[Time:        7] [Episode:       37 Score:     0.3750] [RScore:    -0.0421 RPPS:   300] [PPS:   301 TPS:     4] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 66
+    content: "[Time:        7] [Episode:       38 Score:     0.1667] [RScore:    -0.0366 RPPS:   309] [PPS:   310 TPS:     4] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 42
+    content: "[Time:        7] [Episode:       39 Score:     0.1667] [RScore:    -0.0313 RPPS:   326] [PPS:   327 TPS:     4] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 18
+    content: "[Time:        7] [Episode:       40 Score:     1.0000] [RScore:    -0.0056 RPPS:   333] [PPS:   334 TPS:     4] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 34
+    content: "[Time:        7] [Episode:       41 Score:    -0.3985] [RScore:    -0.0151 RPPS:   334] [PPS:   335 TPS:     4] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 12
+    content: "[Time:        7] [Episode:       42 Score:     0.1667] [RScore:    -0.0108 RPPS:   350] [PPS:   351 TPS:     4] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 9
+    content: "[Time:        7] [Episode:       43 Score:    -0.1667] [RScore:    -0.0144 RPPS:   382] [PPS:   383 TPS:     4] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 28
+    content: "[Time:        7] [Episode:       44 Score:     0.5000] [RScore:    -0.0028 RPPS:   396] [PPS:   397 TPS:     4] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 37
+    content: "[Time:        7] [Episode:       45 Score:    -0.4248] [RScore:    -0.0121 RPPS:   419] [PPS:   420 TPS:     5] [NT:  2 NP:  2 NA: 32]\r\n[Time:        7] [Episode:       46 Score:    -0.2500] [RScore:    -0.0173 RPPS:   425] [PPS:   426 TPS:     5] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 11
+    content: "[Time:        7] [Episode:       47 Score:    -0.3224] [RScore:    -0.0238 RPPS:   428] [PPS:   428 TPS:     5] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 79
+    content: "[Time:        7] [Episode:       48 Score:     1.0000] [RScore:    -0.0025 RPPS:   439] [PPS:   440 TPS:     5] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 38
+    content: "[Time:        7] [Episode:       49 Score:     0.3073] [RScore:     0.0039 RPPS:   444] [PPS:   445 TPS:     5] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 170
+    content: "[Time:        8] [Episode:       50 Score:    -0.3097] [RScore:    -0.0024 RPPS:   440] [PPS:   441 TPS:     5] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 83
+    content: "[Time:        8] [Episode:       51 Score:    -0.2853] [RScore:    -0.0080 RPPS:   452] [PPS:   453 TPS:     5] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 22
+    content: "[Time:        8] [Episode:       52 Score:     0.1667] [RScore:    -0.0046 RPPS:   477] [PPS:   478 TPS:     6] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 14
+    content: "[Time:        8] [Episode:       53 Score:    -0.2500] [RScore:    -0.0092 RPPS:   479] [PPS:   480 TPS:     6] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 16
+    content: "[Time:        8] [Episode:       54 Score:     1.0000] [RScore:     0.0095 RPPS:   485] [PPS:   486 TPS:     6] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 24
+    content: "[Time:        8] [Episode:       55 Score:     0.0000] [RScore:     0.0093 RPPS:   491] [PPS:   492 TPS:     6] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 25
+    content: "[Time:        8] [Episode:       56 Score:    -0.3568] [RScore:     0.0027 RPPS:   505] [PPS:   506 TPS:     6] [NT:  2 NP:  2 NA: 32]\r\n[Time:        8] [Episode:       57 Score:    -0.3280] [RScore:    -0.0031 RPPS:   512] [PPS:   513 TPS:     6] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 160
+    content: "[Time:        8] [Episode:       58 Score:    -0.2500] [RScore:    -0.0073 RPPS:   504] [PPS:   505 TPS:     6] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 23
+    content: "[Time:        8] [Episode:       59 Score:     0.6875] [RScore:     0.0045 RPPS:   526] [PPS:   527 TPS:     6] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 35
+    content: "[Time:        8] [Episode:       60 Score:     0.1667] [RScore:     0.0072 RPPS:   542] [PPS:   543 TPS:     6] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 17
+    content: "[Time:        8] [Episode:       61 Score:     0.0150] [RScore:     0.0073 RPPS:   555] [PPS:   556 TPS:     6] [NT:  2 NP:  2 NA: 32]\r\n"
+  - delay: 11
+    content: "[Time:        8] [Episode:       62 Score:    -0.2500] [RScore:     0.0031 RPPS:   562] [PPS:   563 TPS:     6] [NT:  2 NP:  2 NA: 32]\r\n"
