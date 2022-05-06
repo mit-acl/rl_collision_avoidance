@@ -37,7 +37,8 @@ class Train(EnvConfig):
             self.MAX_NUM_AGENTS_TO_SIM = 4
 
         # self.STATES_IN_OBS = ['is_learning', 'num_other_agents', 'dist_to_goal', 'heading_ego_frame', 'pref_speed', 'radius', 'laserscan']
-        self.STATES_IN_OBS = ['is_learning', 'num_other_agents', 'dist_to_goal', 'heading_ego_frame', 'pref_speed', 'radius', 'other_agents_states']
+        # self.STATES_IN_OBS = ['is_learning', 'num_other_agents', 'dist_to_goal', 'heading_ego_frame', 'pref_speed', 'radius', 'other_agents_states']
+        self.STATES_IN_OBS = ['is_learning', 'num_other_agents', 'rel_pos_to_goal']
         self.STATES_NOT_USED_IN_POLICY = ['is_learning']
 
         self.MULTI_AGENT_ARCH_RNN, self.MULTI_AGENT_ARCH_WEIGHT_SHARING, self.MULTI_AGENT_ARCH_LASERSCAN = range(3)
@@ -70,13 +71,13 @@ class Train(EnvConfig):
                 self.NN_INPUT_AVG_VECTOR = np.hstack([self.NN_INPUT_AVG_VECTOR, self.STATE_INFO_DICT[state]['mean'].flatten()])
                 self.NN_INPUT_STD_VECTOR = np.hstack([self.NN_INPUT_STD_VECTOR, self.STATE_INFO_DICT[state]['std'].flatten()])
         self.FIRST_STATE_INDEX = 1
-        self.HOST_AGENT_OBSERVATION_LENGTH = 4 # dist to goal, heading to goal, pref speed, radius
-        self.OTHER_AGENT_OBSERVATION_LENGTH = 7 # other px, other py, other vx, other vy, other radius, combined radius, distance between
+        self.HOST_AGENT_OBSERVATION_LENGTH = 2 # rel_pos_to_goal
+        self.OTHER_AGENT_OBSERVATION_LENGTH = 0 # other px, other py, other vx, other vy, other radius, combined radius, distance between
         self.OTHER_AGENT_FULL_OBSERVATION_LENGTH = self.OTHER_AGENT_OBSERVATION_LENGTH
         self.HOST_AGENT_STATE_SIZE = self.HOST_AGENT_OBSERVATION_LENGTH
 
         ### ACTIONS
-        self.NUM_ACTIONS = 11
+        self.NUM_ACTIONS = 12
 
         self.LOAD_RL_THEN_TRAIN_RL, self.TRAIN_ONLY_REGRESSION, self.LOAD_REGRESSION_THEN_TRAIN_RL = range(3)
 
@@ -90,7 +91,7 @@ class Train(EnvConfig):
         #########################################################################
         # NUMBER OF AGENTS, PREDICTORS, TRAINERS, AND OTHER SYSTEM SETTINGS
         # IF THE DYNAMIC CONFIG IS ON, THESE ARE THE INITIAL VALUES
-        self.AGENTS                        = 32 # Number of Agents
+        self.AGENTS                        = 1 # Number of Agents
         self.PREDICTORS                    = 2 # Number of Predictors
         self.TRAINERS                      = 2 # Number of Trainers
         self.DEVICE                        = '/cpu:0' # Device
@@ -135,14 +136,14 @@ class Train(EnvConfig):
 
 class TrainPhase1(Train):
     def __init__(self):
-        self.MAX_NUM_AGENTS_IN_ENVIRONMENT = 4
-        self.MAX_NUM_AGENTS_TO_SIM = 4
+        self.MAX_NUM_AGENTS_IN_ENVIRONMENT = 2
+        self.MAX_NUM_AGENTS_TO_SIM = 2
         Train.__init__(self)
         self.TRAIN_VERSION = self.LOAD_REGRESSION_THEN_TRAIN_RL
-        if self.MULTI_AGENT_ARCH == self.MULTI_AGENT_ARCH_RNN:
-            self.LOAD_FROM_WANDB_RUN_ID = 'run-rnn'
-        elif self.MULTI_AGENT_ARCH == self.MULTI_AGENT_ARCH_WEIGHT_SHARING:
-            self.LOAD_FROM_WANDB_RUN_ID = 'run-ws-'+str(self.MAX_NUM_OTHER_AGENTS_OBSERVED+1)
+        # if self.MULTI_AGENT_ARCH == self.MULTI_AGENT_ARCH_RNN:
+        #     self.LOAD_FROM_WANDB_RUN_ID = 'run-rnn'
+        # elif self.MULTI_AGENT_ARCH == self.MULTI_AGENT_ARCH_WEIGHT_SHARING:
+        #     self.LOAD_FROM_WANDB_RUN_ID = 'run-ws-'+str(self.MAX_NUM_OTHER_AGENTS_OBSERVED+1)
         self.EPISODE_NUMBER_TO_LOAD = 0
 
         self.EPISODES                = 1500000 # Total number of episodes and annealing frequency

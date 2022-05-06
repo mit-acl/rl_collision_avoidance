@@ -53,10 +53,32 @@ class Regression():
         # [num training pts, action (2)]
         # [num training pts, value (1)]
         ##########################################
-        dataset_ped_train, dataset_ped_test = self.load_ped_data()
+        # dataset_ped_train, dataset_ped_test = self.load_ped_data()
+        
+        dataset_ped_train, dataset_ped_test = self.generate_simple_ped_data()
 
         # train neural network
         self.train(dataset_ped_train, dataset_ped_test)
+
+    def generate_simple_ped_data(self):
+        num_train_pts = 1000
+        num_test_pts = 100
+        obs_size = 2
+
+        dataset_ped_train = self.generate_simple_data(num_train_pts, obs_size)
+        dataset_ped_test = self.generate_simple_data(num_test_pts, obs_size)
+
+        return dataset_ped_train, dataset_ped_test
+
+    def generate_simple_data(self, num_pts, obs_size):
+        rel_pos = np.random.uniform(low=-10, high=10, size=(num_pts, obs_size))
+        rel_pos_normalized = rel_pos / np.linalg.norm(rel_pos, axis=1)[:, np.newaxis]
+
+        state = np.hstack([np.zeros((num_pts, 1)), rel_pos.copy()])
+        action = -rel_pos_normalized.copy()
+        value = np.zeros((num_pts, 1))
+
+        return state, action, value
 
     def one_hot(self, indices, max_range):
         num_inds = indices.shape[0]
@@ -99,6 +121,7 @@ class Regression():
         output_action_test_indices = self.find_action_index(output_action_test, self.actions.actions)
         output_action_one_hot = self.one_hot(output_action_indices, self.num_actions)
         output_action_test_one_hot = self.one_hot(output_action_test_indices, self.num_actions)
+
         # output_action_one_hot = self.one_warm(output_action_indices, self.num_actions)
         # output_action_test_one_hot = self.one_warm(output_action_test_indices, self.num_actions)
 

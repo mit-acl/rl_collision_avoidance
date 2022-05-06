@@ -33,7 +33,7 @@ from ProcessStats import ProcessStats
 from NoThreadDynamicAdjustment import ThreadDynamicAdjustment
 from ThreadPredictor import ThreadPredictor
 from ThreadTrainer import ThreadTrainer
-from gym_collision_avoidance.envs.policies.GA3C_CADRL.network import Actions as CA_Actions
+from gym_collision_avoidance.envs.policies.GA3C_CADRL.network import VxVyDiscreteActions as CA_Actions
 from Regression import Regression
 
 class Server:
@@ -62,8 +62,11 @@ class Server:
             print("[Server] Finished training regression. Exiting.")
             assert(0)
         elif Config.TRAIN_VERSION == Config.LOAD_REGRESSION_THEN_TRAIN_RL:
-            print("[Server] Loading Regression Model then training RL.")
+            # if getattr(Config, "LOAD_FROM_WANDB_RUN_ID", False):
+            #     print("[Server] Loading Regression Model then training RL.")
             self.model.load(learning_method='regression')
+            # else:
+            #     print("[Server] No LOAD_FROM_WANDB_RUN_ID, so just initializing a new NN instead.")
             self.stats.episode_count.value = 0
         elif Config.TRAIN_VERSION == Config.LOAD_RL_THEN_TRAIN_RL:
             print("[Server] Loading RL Checkpoint Model then training more RL.")

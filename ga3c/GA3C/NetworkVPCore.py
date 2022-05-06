@@ -237,10 +237,12 @@ class NetworkVPCore(object):
 
     def load(self, learning_method='RL'):
 
-        if Config.EPISODE_NUMBER_TO_LOAD > 0:
-            filename = self._checkpoint_filename(Config.EPISODE_NUMBER_TO_LOAD, mode='load', wandb_runid_for_loading=Config.LOAD_FROM_WANDB_RUN_ID)
-        else:
-            filename = tf.train.latest_checkpoint(os.path.dirname(self._checkpoint_filename(episode=0, mode='load', learning_method=learning_method, wandb_runid_for_loading=Config.LOAD_FROM_WANDB_RUN_ID)))
+        # if Config.EPISODE_NUMBER_TO_LOAD > 0:
+        #     filename = self._checkpoint_filename(Config.EPISODE_NUMBER_TO_LOAD, mode='load', wandb_runid_for_loading=Config.LOAD_FROM_WANDB_RUN_ID)
+        # else:
+        #     filename = tf.train.latest_checkpoint(os.path.dirname(self._checkpoint_filename(episode=0, mode='load', learning_method=learning_method, wandb_runid_for_loading=Config.LOAD_FROM_WANDB_RUN_ID)))
+
+        filename = "/Users/mfe/code/rl_collision_avoidance/ga3c/GA3C/checkpoints/RL_tmp/network_00000000"
 
         print("[NetworkVPCore] Loading checkpoint file:", filename)
         self.saver.restore(self.sess, filename)
