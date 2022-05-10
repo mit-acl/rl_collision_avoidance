@@ -9,7 +9,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 if $MAKE_VENV; then
     # Virtualenv w/ python3
-    export PYTHONPATH=/usr/bin/python3 # point to your python3
+    export PYTHONPATH=/home/mfe/.pyenv/versions/3.6.9/bin/python # point to your python3
 
     # Check that it's actually python 3.4-7
     PYTHONVERSION=`python --version`

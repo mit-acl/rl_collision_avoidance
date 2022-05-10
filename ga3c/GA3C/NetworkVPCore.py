@@ -242,7 +242,7 @@ class NetworkVPCore(object):
         # else:
         #     filename = tf.train.latest_checkpoint(os.path.dirname(self._checkpoint_filename(episode=0, mode='load', learning_method=learning_method, wandb_runid_for_loading=Config.LOAD_FROM_WANDB_RUN_ID)))
 
-        filename = "/Users/mfe/code/rl_collision_avoidance/ga3c/GA3C/checkpoints/RL_tmp/network_00000000"
+        filename = os.path.join(os.path.dirname(os.path.realpath(__file__)), "checkpoints", 'RL_tmp/network_00000000')
 
         print("[NetworkVPCore] Loading checkpoint file:", filename)
         self.saver.restore(self.sess, filename)

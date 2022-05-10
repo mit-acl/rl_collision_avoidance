@@ -91,7 +91,7 @@ class Train(EnvConfig):
         #########################################################################
         # NUMBER OF AGENTS, PREDICTORS, TRAINERS, AND OTHER SYSTEM SETTINGS
         # IF THE DYNAMIC CONFIG IS ON, THESE ARE THE INITIAL VALUES
-        self.AGENTS                        = 1 # Number of Agents
+        self.AGENTS                        = 32 # Number of Agents
         self.PREDICTORS                    = 2 # Number of Predictors
         self.TRAINERS                      = 2 # Number of Trainers
         self.DEVICE                        = '/cpu:0' # Device
@@ -136,8 +136,8 @@ class Train(EnvConfig):
 
 class TrainPhase1(Train):
     def __init__(self):
-        self.MAX_NUM_AGENTS_IN_ENVIRONMENT = 2
-        self.MAX_NUM_AGENTS_TO_SIM = 2
+        self.MAX_NUM_AGENTS_IN_ENVIRONMENT = 1
+        self.MAX_NUM_AGENTS_TO_SIM = 1
         Train.__init__(self)
         self.TRAIN_VERSION = self.LOAD_REGRESSION_THEN_TRAIN_RL
         # if self.MULTI_AGENT_ARCH == self.MULTI_AGENT_ARCH_RNN:
