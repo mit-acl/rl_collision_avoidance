@@ -38,7 +38,7 @@ class Train(EnvConfig):
 
         # self.STATES_IN_OBS = ['is_learning', 'num_other_agents', 'dist_to_goal', 'heading_ego_frame', 'pref_speed', 'radius', 'laserscan']
         # self.STATES_IN_OBS = ['is_learning', 'num_other_agents', 'dist_to_goal', 'heading_ego_frame', 'pref_speed', 'radius', 'other_agents_states']
-        self.STATES_IN_OBS = ['is_learning', 'num_other_agents', 'rel_pos_to_goal']
+        self.STATES_IN_OBS = ['is_learning', 'num_other_agents', 'rel_pos_to_goal', 'other_agents_states_simple']
         self.STATES_NOT_USED_IN_POLICY = ['is_learning']
 
         self.MULTI_AGENT_ARCH_RNN, self.MULTI_AGENT_ARCH_WEIGHT_SHARING, self.MULTI_AGENT_ARCH_LASERSCAN = range(3)
@@ -72,7 +72,7 @@ class Train(EnvConfig):
                 self.NN_INPUT_STD_VECTOR = np.hstack([self.NN_INPUT_STD_VECTOR, self.STATE_INFO_DICT[state]['std'].flatten()])
         self.FIRST_STATE_INDEX = 1
         self.HOST_AGENT_OBSERVATION_LENGTH = 2 # rel_pos_to_goal
-        self.OTHER_AGENT_OBSERVATION_LENGTH = 0 # other px, other py, other vx, other vy, other radius, combined radius, distance between
+        self.OTHER_AGENT_OBSERVATION_LENGTH = 2 # other rel_pos_to_goal
         self.OTHER_AGENT_FULL_OBSERVATION_LENGTH = self.OTHER_AGENT_OBSERVATION_LENGTH
         self.HOST_AGENT_STATE_SIZE = self.HOST_AGENT_OBSERVATION_LENGTH
 
@@ -136,8 +136,8 @@ class Train(EnvConfig):
 
 class TrainPhase1(Train):
     def __init__(self):
-        self.MAX_NUM_AGENTS_IN_ENVIRONMENT = 1
-        self.MAX_NUM_AGENTS_TO_SIM = 1
+        self.MAX_NUM_AGENTS_IN_ENVIRONMENT = 2
+        self.MAX_NUM_AGENTS_TO_SIM = 2
         Train.__init__(self)
         self.TRAIN_VERSION = self.LOAD_REGRESSION_THEN_TRAIN_RL
         # if self.MULTI_AGENT_ARCH == self.MULTI_AGENT_ARCH_RNN:

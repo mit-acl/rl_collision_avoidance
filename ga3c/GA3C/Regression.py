@@ -63,7 +63,7 @@ class Regression():
     def generate_simple_ped_data(self):
         num_train_pts = 1000
         num_test_pts = 100
-        obs_size = 2
+        obs_size = 4
 
         dataset_ped_train = self.generate_simple_data(num_train_pts, obs_size)
         dataset_ped_test = self.generate_simple_data(num_test_pts, obs_size)
@@ -71,10 +71,12 @@ class Regression():
         return dataset_ped_train, dataset_ped_test
 
     def generate_simple_data(self, num_pts, obs_size):
-        rel_pos = np.random.uniform(low=-10, high=10, size=(num_pts, obs_size))
+        rel_pos = np.random.uniform(low=-10, high=10, size=(num_pts, 2))
         rel_pos_normalized = rel_pos / np.linalg.norm(rel_pos, axis=1)[:, np.newaxis]
 
-        state = np.hstack([np.zeros((num_pts, 1)), rel_pos.copy()])
+        rel_pos_of_obstacle = np.random.uniform(low=-10, high=10, size=(num_pts, 2))
+
+        state = np.hstack([np.zeros((num_pts, 1)), rel_pos.copy(), rel_pos_of_obstacle.copy()])
         action = -rel_pos_normalized.copy()
         value = np.zeros((num_pts, 1))
 
